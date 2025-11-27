@@ -476,7 +476,7 @@ const Note = () => {
   const monthYear = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col">
+    <div className="fixed inset-0 bg-journal-content flex flex-col">
       {/* Fixed Header - Dark Background */}
       <header 
         className="fixed top-0 left-0 right-0 z-50 bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] h-[150px]"
