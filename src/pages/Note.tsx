@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +17,7 @@ import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudLightnin
 
 const Note = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -254,6 +255,12 @@ const Note = () => {
   };
 
   useEffect(() => {
+    // Auto-start recording if coming from start page
+    const shouldAutoStart = searchParams.get('autostart') === 'true';
+    if (shouldAutoStart && !isRecording) {
+      startRecording();
+    }
+    
     return () => {
       // Cleanup when component unmounts
       if (isRecording) {
