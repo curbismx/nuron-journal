@@ -380,9 +380,9 @@ const Note = () => {
         </div>
       ) : (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[600px]">
-          <div className="bg-[hsl(4,73%,62%)] rounded-[20px] p-6 flex items-center h-[108px] justify-center">
+          <div className="bg-[hsl(4,73%,62%)] rounded-[20px] p-6 h-[108px]">
             {!hasBeenPaused ? (
-              <>
+              <div className="flex items-center gap-4 h-full">
                 <Button
                   variant="ghost"
                   onClick={pauseRecording}
@@ -391,47 +391,55 @@ const Note = () => {
                   <img src={pauseIcon} alt="Pause" className="w-[40px] h-[40px]" />
                 </Button>
                 
-                <div className="flex-1 h-[60px] mx-4">
+                <div className="flex-1 h-[60px]">
                   <AudioWaveform isRecording={isRecording && !isPaused} audioLevel={audioLevel} recordingTime={recordingTime} />
                 </div>
 
                 <div className="text-white font-outfit text-[16px] font-light flex-shrink-0">
                   {Math.floor(recordingTime / 60).toString().padStart(2, '0')}:{(recordingTime % 60).toString().padStart(2, '0')}
                 </div>
-              </>
+              </div>
             ) : (
-              <div className="flex items-center gap-[30px]">
-                <div className="flex flex-col items-center justify-center">
-                  <Button
-                    variant="ghost"
-                    onClick={resumeRecording}
-                    className="hover:bg-white/10 p-0 h-[40px] w-[40px] mb-1"
-                  >
-                    <img src={recordMoreIcon} alt="Record More" className="w-[40px] h-[40px]" />
-                  </Button>
-                  <span className="text-white font-outfit text-[12px] font-light">REC</span>
+              <div className="flex items-center gap-4 h-full relative">
+                <div className="flex items-center gap-[30px]">
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      onClick={resumeRecording}
+                      className="hover:bg-white/10 p-0 h-auto w-auto"
+                    >
+                      <img src={recordMoreIcon} alt="Record More" className="w-[40px] h-[40px]" />
+                    </Button>
+                    <span className="absolute top-[45px] left-1/2 -translate-x-1/2 text-white font-outfit text-[12px] font-light whitespace-nowrap">REC</span>
+                  </div>
+                  
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      onClick={stopRecording}
+                      className="hover:bg-white/10 p-0 h-auto w-auto"
+                    >
+                      <img src={stopIcon} alt="Stop" className="w-[40px] h-[40px]" />
+                    </Button>
+                    <span className="absolute top-[45px] left-1/2 -translate-x-1/2 text-white font-outfit text-[12px] font-light whitespace-nowrap">STOP</span>
+                  </div>
+                  
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      onClick={resumeRecording}
+                      className="hover:bg-white/10 p-0 h-auto w-auto"
+                    >
+                      <img src={playIcon} alt="Play" className="w-[40px] h-[40px]" />
+                    </Button>
+                    <span className="absolute top-[45px] left-1/2 -translate-x-1/2 text-white font-outfit text-[12px] font-light whitespace-nowrap">PLAY</span>
+                  </div>
                 </div>
-                
-                <div className="flex flex-col items-center justify-center">
-                  <Button
-                    variant="ghost"
-                    onClick={stopRecording}
-                    className="hover:bg-white/10 p-0 h-[40px] w-[40px] mb-1"
-                  >
-                    <img src={stopIcon} alt="Stop" className="w-[40px] h-[40px]" />
-                  </Button>
-                  <span className="text-white font-outfit text-[12px] font-light">STOP</span>
-                </div>
-                
-                <div className="flex flex-col items-center justify-center">
-                  <Button
-                    variant="ghost"
-                    onClick={resumeRecording}
-                    className="hover:bg-white/10 p-0 h-[40px] w-[40px] mb-1"
-                  >
-                    <img src={playIcon} alt="Play" className="w-[40px] h-[40px]" />
-                  </Button>
-                  <span className="text-white font-outfit text-[12px] font-light">PLAY</span>
+
+                <div className="flex-1"></div>
+
+                <div className="text-white font-outfit text-[16px] font-light flex-shrink-0">
+                  {Math.floor(recordingTime / 60).toString().padStart(2, '0')}:{(recordingTime % 60).toString().padStart(2, '0')}
                 </div>
               </div>
             )}
