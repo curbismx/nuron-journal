@@ -48,15 +48,12 @@ const Note = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recognitionRef = useRef<any>(null);
-  const shouldRestartRecognition = useRef(false);
   const transcribedTextRef = useRef('');
 
   const startRecording = async () => {
     try {
       setIsRecording(true);
-      shouldRestartRecognition.current = true;
       
-      // Request microphone
       const micStream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           sampleRate: 24000,
@@ -67,33 +64,24 @@ const Note = () => {
         }
       });
       
-      // Create audio context
       audioContextRef.current = new AudioContext({ sampleRate: 24000 });
-      const audioContext = audioContextRef.current;
-      
-      // Create destination to handle audio
-      const destination = audioContext.createMediaStreamDestination();
-      
-      // Connect microphone
-      const micSource = audioContext.createMediaStreamSource(micStream);
+      const destination = audioContextRef.current.createMediaStreamDestination();
+      const micSource = audioContextRef.current.createMediaStreamSource(micStream);
       micSource.connect(destination);
       
-      // Set up audio analysis for visualization
-      analyserRef.current = audioContext.createAnalyser();
+      analyserRef.current = audioContextRef.current.createAnalyser();
       analyserRef.current.fftSize = 256;
       micSource.connect(analyserRef.current);
       
-      // Store microphone track
       streamRef.current = micStream;
 
-      // Set up Web Speech API for transcription
+      // Simple speech recognition without complex restart logic
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
-        recognition.interimResults = true; // Enable real-time transcription
+        recognition.interimResults = true;
         recognition.lang = 'en-US';
-        recognition.maxAlternatives = 1;
 
         recognition.onresult = (event: any) => {
           let interim = '';
@@ -112,7 +100,6 @@ const Note = () => {
             setTranscribedText((prev) => {
               const newText = prev + final;
               transcribedTextRef.current = newText;
-              // Generate title when we have enough text
               if (newText.trim().split(/\s+/).length >= 10 && noteTitle === 'Note Title') {
                 generateTitle(newText);
               }
@@ -129,30 +116,25 @@ const Note = () => {
         };
 
         recognition.onend = () => {
-          if (shouldRestartRecognition.current && recognitionRef.current) {
+          // Only restart if the recognition ref is still valid
+          if (recognitionRef.current === recognition) {
             try {
-              recognitionRef.current.start();
+              recognition.start();
             } catch (e) {
-              console.log('Recognition restart failed:', e);
+              // Don't log - this is expected when manually stopping
             }
           }
         };
 
-        try {
-          recognition.start();
-          recognitionRef.current = recognition;
-          setIsTranscribing(true);
-        } catch (e) {
-          console.error('Failed to start recognition:', e);
-        }
-      } else {
-        console.log('Speech recognition unavailable');
+        recognition.start();
+        recognitionRef.current = recognition;
+        setIsTranscribing(true);
       }
 
-      // Start visualizing audio levels
+      // Audio visualization
       const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
       const updateAudioLevel = () => {
-        if (analyserRef.current && isRecording && !isPaused) {
+        if (analyserRef.current && recognitionRef.current) {
           analyserRef.current.getByteFrequencyData(dataArray);
           const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
           setAudioLevel(average / 255);
@@ -161,7 +143,7 @@ const Note = () => {
       };
       updateAudioLevel();
 
-      // Use the stream for recording
+      // Media recording
       const mediaRecorder = new MediaRecorder(destination.stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
@@ -173,12 +155,9 @@ const Note = () => {
       };
 
       mediaRecorder.onstop = () => {
-        // Clean up old blob URL to prevent memory leak
         if (audioUrl) {
           URL.revokeObjectURL(audioUrl);
         }
-        
-        // Create new audio blob
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
@@ -193,16 +172,12 @@ const Note = () => {
 
   const pauseRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      shouldRestartRecognition.current = false;
       setIsPaused(true);
       setHasBeenPaused(true);
       
+      // Stop recognition completely
       if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (e) {
-          console.log('Recognition stop error:', e);
-        }
+        recognitionRef.current.stop();
         recognitionRef.current = null;
       }
       
@@ -221,8 +196,8 @@ const Note = () => {
       });
       mediaRecorderRef.current.resume();
       setIsPaused(false);
-      shouldRestartRecognition.current = true;
       
+      // Restart speech recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -260,28 +235,23 @@ const Note = () => {
         };
 
         recognition.onend = () => {
-          if (shouldRestartRecognition.current && recognitionRef.current) {
+          if (recognitionRef.current === recognition) {
             try {
-              recognitionRef.current.start();
+              recognition.start();
             } catch (e) {
-              console.log('Recognition restart failed:', e);
+              // Expected when stopping
             }
           }
         };
 
-        try {
-          recognition.start();
-          recognitionRef.current = recognition;
-          setIsTranscribing(true);
-        } catch (e) {
-          console.log('Failed to resume recognition:', e);
-        }
+        recognition.start();
+        recognitionRef.current = recognition;
+        setIsTranscribing(true);
       }
     }
   };
 
   const stopRecording = () => {
-    shouldRestartRecognition.current = false;
     setIsRecording(false);
     setIsPaused(false);
     setHasBeenPaused(false);
@@ -290,11 +260,7 @@ const Note = () => {
     setRecordingTime(0);
     
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        console.log('Recognition stop error:', e);
-      }
+      recognitionRef.current.stop();
       recognitionRef.current = null;
     }
     if (mediaRecorderRef.current) {
@@ -307,7 +273,6 @@ const Note = () => {
       audioContextRef.current.close();
     }
     
-    // Use ref to get current text, not stale closure
     if (transcribedTextRef.current && transcribedTextRef.current.trim().length > 10) {
       generateTitle(transcribedTextRef.current);
     }
@@ -411,12 +376,16 @@ const Note = () => {
   }, [transcribedText]);
 
   useEffect(() => {
-    // Auto-start recording ONLY if coming from start page with autostart parameter
+    // Only auto-start if explicitly requested with autostart=true
     const shouldAutoStart = searchParams.get('autostart') === 'true';
-    if (shouldAutoStart && !isRecording) {
+    if (shouldAutoStart) {
+      // Remove the autostart parameter to prevent re-triggering
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('autostart');
+      navigate(`/note?${newSearchParams.toString()}`, { replace: true });
       startRecording();
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     return () => {
