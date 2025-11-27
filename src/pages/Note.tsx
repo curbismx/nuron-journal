@@ -16,6 +16,10 @@ import recordButton from '@/assets/record-button.png';
 import recordButtonNew from '@/assets/recordbutton.png';
 import pauseButton2 from '@/assets/pause-2.png';
 import playButton2 from '@/assets/play-2.png';
+import imageButton2 from '@/assets/image-2.png';
+import rewriteButton2 from '@/assets/rewrite-2.png';
+import shareButton2 from '@/assets/share-2.png';
+import recordMedium from '@/assets/record-medium.png';
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudLightning } from 'lucide-react';
 
 const Note = () => {
@@ -420,22 +424,22 @@ const Note = () => {
       {/* Recording Control - Always 4 buttons at bottom */}
       <div className="fixed bottom-[30px] left-0 right-0 flex justify-between items-center px-[30px]">
         <button className="flex flex-col items-center gap-2">
-          <img src={imageButton} alt="Image" className="w-[60px] h-[60px]" />
+          <img src={imageButton2} alt="Image" className="h-auto" />
         </button>
         <button className="flex flex-col items-center gap-2">
-          <img src={rewriteButton} alt="Rewrite" className="w-[60px] h-[60px]" />
+          <img src={rewriteButton2} alt="Rewrite" className="h-auto" />
         </button>
         <button className="flex flex-col items-center gap-2">
-          <img src={shareButton} alt="Share" className="w-[60px] h-[60px]" />
+          <img src={shareButton2} alt="Share" className="h-auto" />
         </button>
         <button 
           onClick={!isRecording ? startRecording : (isPaused ? resumeRecording : pauseRecording)} 
           className="flex flex-col items-center gap-2"
         >
           <img 
-            src={isRecording && !isPaused ? pauseButton2 : recordButtonNew} 
+            src={isRecording && !isPaused ? pauseButton2 : recordMedium} 
             alt={isRecording && !isPaused ? "Pause" : "Record"} 
-            className="w-[60px] h-[60px]" 
+            className="h-auto" 
           />
         </button>
       </div>
