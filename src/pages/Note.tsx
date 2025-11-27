@@ -542,7 +542,7 @@ const Note = () => {
               transcribedTextRef.current = e.target.value;
             }}
             placeholder="Start speaking to transcribe..."
-            className="w-full min-h-full resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)]"
+            className="w-full min-h-full resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)] pt-4"
             readOnly={isRecording}
           />
         </div>
