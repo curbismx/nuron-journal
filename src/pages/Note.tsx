@@ -532,7 +532,7 @@ const Note = () => {
         </div>
 
         {/* Body text */}
-        <div className="px-8">
+        <div className="px-8 -mt-[10px]">
           <textarea
             ref={textContentRef}
             value={transcribedText}
