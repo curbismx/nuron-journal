@@ -511,8 +511,8 @@ const Note = () => {
             <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(60,1%,66%)] mt-[2px]">{dayName}</div>
             {weather && (
               <div className="flex items-center gap-1.5 mt-1">
-                <weather.WeatherIcon size={20} className="text-[hsl(0,0%,0%)]" />
-                <span className="text-[16px] font-outfit font-light text-[hsl(0,0%,0%)]">{weather.temp}°C</span>
+                <weather.WeatherIcon size={20} className="text-[hsl(60,1%,66%)]" />
+                <span className="text-[16px] font-outfit font-light text-[hsl(60,1%,66%)]">{weather.temp}°C</span>
               </div>
             )}
           </div>
