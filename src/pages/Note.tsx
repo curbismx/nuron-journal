@@ -389,17 +389,33 @@ const Note = () => {
   };
 
   useEffect(() => {
-    // Prevent body scroll on mobile
+    // Prevent body scroll on mobile - more aggressive approach
+    const originalStyle = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      width: document.body.style.width,
+      height: document.body.style.height,
+      touchAction: document.body.style.touchAction,
+    };
+    
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
     document.body.style.height = '100%';
+    document.body.style.touchAction = 'none';
+    
+    // Also prevent scroll on document root
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.touchAction = 'none';
     
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
+      document.body.style.overflow = originalStyle.overflow;
+      document.body.style.position = originalStyle.position;
+      document.body.style.width = originalStyle.width;
+      document.body.style.height = originalStyle.height;
+      document.body.style.touchAction = originalStyle.touchAction;
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.touchAction = '';
     };
   }, []);
 
@@ -492,7 +508,10 @@ const Note = () => {
   return (
     <div className="fixed inset-0 bg-background flex flex-col overflow-hidden touch-none">
       {/* Header - Fixed at top */}
-      <header className="bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] flex flex-col flex-shrink-0 h-[150px] touch-none">
+      <header 
+        className="bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] flex flex-col flex-shrink-0 h-[150px] touch-none"
+        onTouchMove={(e) => e.preventDefault()}
+      >
         <div className="flex items-center justify-between mb-auto">
           <Button
             variant="ghost"
@@ -512,7 +531,10 @@ const Note = () => {
       {/* Content Area with rounded top */}
       <main className="flex-1 bg-journal-content rounded-t-[30px] flex flex-col min-h-0 overflow-hidden touch-none">
         {/* Date and Title - Static, not scrolling */}
-        <div className="px-8 pt-8 pb-4 flex-shrink-0 touch-none">
+        <div 
+          className="px-8 pt-8 pb-4 flex-shrink-0 touch-none"
+          onTouchMove={(e) => e.preventDefault()}
+        >
           <div className="flex items-start gap-4 mb-6">
             <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(0,0%,0%)]">{dayNumber}</div>
             <div className="flex flex-col">
