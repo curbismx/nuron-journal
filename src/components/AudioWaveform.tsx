@@ -22,16 +22,12 @@ const AudioWaveform = ({ isRecording, audioLevel, recordingTime }: AudioWaveform
     const barWidth = 3;
     const gap = 8;
     const maxHeight = canvas.height;
-    const borderRadius = 1.5; // Half of barWidth for rounded caps
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Number of bars to show based on recording time (one per second)
-      const barsToShow = Math.min(recordingTime, numBars);
-
-      // Draw bars from left to right
-      for (let i = 0; i < barsToShow; i++) {
+      // Draw all bars with animated heights
+      for (let i = 0; i < numBars; i++) {
         const x = i * (barWidth + gap);
         
         // Create animated height for each bar
@@ -45,7 +41,7 @@ const AudioWaveform = ({ isRecording, audioLevel, recordingTime }: AudioWaveform
         
         // Draw rounded rectangle
         ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, h, borderRadius);
+        ctx.roundRect(x, y, barWidth, h, 1.5);
         ctx.fill();
       }
 
