@@ -31,6 +31,7 @@ const Note = () => {
   const [weather, setWeather] = useState<{ temp: number; WeatherIcon: React.ComponentType<any> } | null>(null);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const textContentRef = useRef<HTMLDivElement | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -315,6 +316,13 @@ const Note = () => {
     return () => clearInterval(interval);
   }, [isRecording, isPaused]);
 
+  // Auto-scroll to bottom when text updates
+  useEffect(() => {
+    if (textContentRef.current) {
+      textContentRef.current.scrollTop = textContentRef.current.scrollHeight;
+    }
+  }, [transcribedText, interimText]);
+
   const handleBack = () => {
     stopRecording();
     navigate('/');
@@ -326,9 +334,9 @@ const Note = () => {
   const monthYear = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="bg-journal-header pl-[30px] pt-[50px] pr-4 pb-[30px] flex flex-col h-[170px]">
+    <div className="min-h-screen bg-background flex flex-col overflow-hidden">
+      {/* Header - Fixed */}
+      <header className="bg-journal-header pl-[30px] pt-[50px] pr-4 pb-[30px] flex flex-col h-[170px] flex-shrink-0">
         <div className="flex items-center justify-between mb-auto">
           <Button
             variant="ghost"
@@ -345,24 +353,31 @@ const Note = () => {
         </h1>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 bg-journal-content rounded-t-[30px] -mt-0 px-8 pt-8 pb-32">
-        <div className="flex items-start gap-4 mb-6">
-          <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(0,0%,0%)]">{dayNumber}</div>
-          <div className="flex flex-col">
-            <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(0,0%,0%)] mt-[2px]">{dayName}</div>
-            {weather && (
-              <div className="flex items-center gap-1.5 mt-1">
-                <weather.WeatherIcon size={20} className="text-[hsl(0,0%,0%)]" />
-                <span className="text-[16px] font-outfit font-light text-[hsl(0,0%,0%)]">{weather.temp}°C</span>
-              </div>
-            )}
+      {/* Content - Scrollable */}
+      <main className="flex-1 bg-journal-content rounded-t-[30px] -mt-0 flex flex-col overflow-hidden">
+        {/* Date and Title - Sticky */}
+        <div className="px-8 pt-8 pb-4 flex-shrink-0">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(0,0%,0%)]">{dayNumber}</div>
+            <div className="flex flex-col">
+              <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(0,0%,0%)] mt-[2px]">{dayName}</div>
+              {weather && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <weather.WeatherIcon size={20} className="text-[hsl(0,0%,0%)]" />
+                  <span className="text-[16px] font-outfit font-light text-[hsl(0,0%,0%)]">{weather.temp}°C</span>
+                </div>
+              )}
+            </div>
           </div>
+
+          <h2 className="text-[28px] font-outfit font-semibold mb-4 text-[hsl(0,0%,0%)] -mt-2">{noteTitle}</h2>
         </div>
 
-        <h2 className="text-[28px] font-outfit font-semibold mb-4 text-[hsl(0,0%,0%)] -mt-2">{noteTitle}</h2>
-
-        <div className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,0%)] -mt-[5px]">
+        {/* Text Content - Scrollable */}
+        <div 
+          ref={textContentRef}
+          className="flex-1 overflow-y-auto px-8 pb-[170px] text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,0%)]"
+        >
           {transcribedText || (isRecording ? '' : 'Start speaking to transcribe...')}
           {interimText && <span className="opacity-60">{interimText}</span>}
         </div>
@@ -385,7 +400,7 @@ const Note = () => {
           </button>
         </div>
       ) : (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[600px]">
+        <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[600px]">
           <div className="bg-[hsl(4,73%,62%)] rounded-[20px] p-6 h-[108px]">
             <div className="flex items-center gap-4 h-full relative">
               <div className="flex items-center gap-[30px]">
