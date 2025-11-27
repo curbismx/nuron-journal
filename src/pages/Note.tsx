@@ -486,7 +486,7 @@ const Note = () => {
   return (
     <>
       {/* LAYER 1: Dark Header - Completely Fixed */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-journal-header pl-[30px] pt-[20px] pr-4 pb-[30px] h-[120px]">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] h-[120px]">
         <div className="flex items-center justify-between mb-auto">
           <Button
             variant="ghost"
@@ -504,7 +504,7 @@ const Note = () => {
       </header>
 
       {/* LAYER 2: Card Header (date, title) - Fixed below dark header */}
-      <div className="fixed top-[120px] left-0 right-0 z-20 bg-journal-content rounded-t-[30px] px-8 pt-3.5 pb-4">
+      <div className="fixed top-[110px] left-0 right-0 z-20 bg-journal-content rounded-t-[30px] px-8 pt-3.5 pb-4">
         <div className="flex items-start gap-4 mb-4">
           <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(60,1%,66%)]">{dayNumber}</div>
           <div className="flex flex-col">
