@@ -546,20 +546,14 @@ const Note = () => {
             </div>
           </div>
 
-          <h2 
-            className="text-[28px] font-outfit font-semibold mb-4 text-[hsl(0,0%,0%)] -mt-2 outline-none"
-            contentEditable={!isRecording}
-            suppressContentEditableWarning
-            onInput={(e) => setNoteTitle(e.currentTarget.textContent || 'Note Title')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                e.currentTarget.blur();
-              }
-            }}
-          >
-            {noteTitle}
-          </h2>
+          <input
+            type="text"
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value || 'Note Title')}
+            disabled={isRecording}
+            className="text-[28px] font-outfit font-semibold mb-4 text-[hsl(0,0%,0%)] -mt-2 outline-none bg-transparent border-none w-full disabled:opacity-100"
+            placeholder="Note Title"
+          />
         </div>
 
         {/* Text Content - ONLY this scrolls */}
