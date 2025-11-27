@@ -408,10 +408,21 @@ const Note = () => {
 
   // Set initial placeholder text
   useEffect(() => {
-    if (textContentRef.current && !transcribedText && !isRecording) {
-      textContentRef.current.textContent = 'Start speaking to transcribe...';
+    if (textContentRef.current && !transcribedText && !noteContent && !isRecording) {
+      textContentRef.current.innerHTML = 'Start speaking to transcribe...';
     }
-  }, [transcribedText, isRecording]);
+  }, [transcribedText, noteContent, isRecording]);
+
+  // Update content when transcription happens
+  useEffect(() => {
+    if (textContentRef.current && transcribedText && isRecording) {
+      const currentHtml = textContentRef.current.innerHTML;
+      // Only update if it doesn't already contain the text
+      if (!currentHtml.includes(transcribedText.slice(-20))) {
+        textContentRef.current.innerHTML = noteContent || transcribedText;
+      }
+    }
+  }, [transcribedText, noteContent, isRecording]);
 
   useEffect(() => {
     // Fetch weather data
@@ -570,16 +581,7 @@ const Note = () => {
               setTranscribedText('');
             }
           }}
-          dangerouslySetInnerHTML={
-            !transcribedText && !noteContent && !isRecording
-              ? { __html: 'Start speaking to transcribe...' }
-              : undefined
-          }
-        >
-          {(noteContent || transcribedText) && !interimText && (
-            <span dangerouslySetInnerHTML={{ __html: noteContent || transcribedText }} />
-          )}
-        </div>
+        />
       </main>
 
       {/* Recording Control - Two States */}
