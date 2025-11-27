@@ -485,7 +485,7 @@ const Note = () => {
 
   return (
     <>
-      {/* LAYER 1: Dark Header - Completely Fixed */}
+      {/* LAYER 1: Dark Header - Only Fixed Element */}
       <header className="fixed top-0 left-0 right-0 z-30 bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] h-[150px]">
         <div className="flex items-center justify-between mb-auto">
           <Button
@@ -503,57 +503,59 @@ const Note = () => {
         </h1>
       </header>
 
-      {/* LAYER 2: Card Header (date, title) - Fixed below dark header */}
-      <div className="fixed top-[150px] left-0 right-0 z-20 bg-journal-content rounded-t-[30px] px-8 pt-3.5 pb-4">
-        <div className="flex items-start gap-4 mb-4">
-          <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(60,1%,66%)]">{dayNumber}</div>
-          <div className="flex flex-col">
-            <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(60,1%,66%)] mt-[2px]">{dayName}</div>
-            {weather && (
-              <div className="flex items-center gap-1.5 mt-1">
-                <weather.WeatherIcon size={20} className="text-[hsl(60,1%,66%)]" />
-                <span className="text-[16px] font-outfit font-light text-[hsl(60,1%,66%)]">{weather.temp}°C</span>
-              </div>
+      {/* LAYER 2: Unified Scrollable Container - Everything scrolls together */}
+      <div 
+        ref={scrollContainerRef}
+        className="fixed top-[150px] bottom-[160px] left-0 right-0 z-10 bg-journal-content rounded-t-[30px] overflow-y-auto"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        <div className="px-8 pt-3.5 pb-8">
+          {/* Date and Weather */}
+          <div className="flex items-start gap-4 mb-4">
+            <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(60,1%,66%)]">{dayNumber}</div>
+            <div className="flex flex-col">
+              <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(60,1%,66%)] mt-[2px]">{dayName}</div>
+              {weather && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <weather.WeatherIcon size={20} className="text-[hsl(60,1%,66%)]" />
+                  <span className="text-[16px] font-outfit font-light text-[hsl(60,1%,66%)]">{weather.temp}°C</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Title */}
+          <input
+            type="text"
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value || 'Note Title')}
+            disabled={isRecording}
+            className="text-[28px] font-outfit font-semibold text-[hsl(0,0%,25%)] outline-none bg-transparent border-none w-full disabled:opacity-100 focus:outline-none focus:ring-0 shadow-none -mt-[10px] mb-4"
+            placeholder="Note Title"
+          />
+
+          {/* Text Content */}
+          <div className="min-h-[400px]">
+            <textarea
+              value={transcribedText}
+              onChange={(e) => {
+                setTranscribedText(e.target.value);
+                transcribedTextRef.current = e.target.value;
+              }}
+              placeholder="Start speaking to transcribe..."
+              className="w-full min-h-[400px] resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)]"
+              readOnly={isRecording}
+            />
+            {interimText && isRecording && (
+              <span className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,60%)] italic">
+                {interimText}
+              </span>
             )}
           </div>
         </div>
-
-        <input
-          type="text"
-          value={noteTitle}
-          onChange={(e) => setNoteTitle(e.target.value || 'Note Title')}
-          disabled={isRecording}
-          className="text-[28px] font-outfit font-semibold text-[hsl(0,0%,25%)] outline-none bg-transparent border-none w-full disabled:opacity-100 focus:outline-none focus:ring-0 shadow-none -mt-[10px]"
-          placeholder="Note Title"
-        />
       </div>
 
-      {/* LAYER 3: Scrollable Text Area - Fixed position with internal scroll */}
-      <div className="fixed top-[295px] bottom-[160px] left-0 right-0 z-10 bg-journal-content overflow-hidden">
-        <div 
-          ref={scrollContainerRef}
-          className="h-full overflow-y-auto px-8 pb-8"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <textarea
-            value={transcribedText}
-            onChange={(e) => {
-              setTranscribedText(e.target.value);
-              transcribedTextRef.current = e.target.value;
-            }}
-            placeholder="Start speaking to transcribe..."
-            className="w-full min-h-full resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)]"
-            readOnly={isRecording}
-          />
-          {interimText && isRecording && (
-            <span className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,60%)] italic">
-              {interimText}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* LAYER 4: Bottom fill to cover gap */}
+      {/* LAYER 3: Bottom fill to cover gap */}
       <div className="fixed bottom-0 left-0 right-0 h-[160px] z-5 bg-journal-content" />
 
       {/* LAYER 5: Recording Controls - Fixed at bottom */}
