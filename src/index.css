@@ -9,8 +9,8 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Nuron Journal Design System */
-    --background: 40 20% 96%;
-    --foreground: 0 0% 0%;
+    --background: 0 0% 18%;
+    --foreground: 0 0% 100%;
 
     --card: 40 20% 96%;
     --card-foreground: 0 0% 0%;
@@ -42,7 +42,7 @@ All colors MUST be HSL.
     /* Journal specific tokens */
     --journal-header: 0 0% 18%;
     --journal-header-foreground: 0 0% 100%;
-    --journal-content: 40 20% 96%;
+    --journal-content: 0 0% 98%;
   }
 
   .dark {

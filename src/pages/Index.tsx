@@ -4,7 +4,7 @@ import settingsIcon from "@/assets/settings.png";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-journal-content flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="bg-journal-header px-4 py-6 flex items-center justify-between h-[100px]">
         <Button 
@@ -28,8 +28,8 @@ const Index = () => {
         </Button>
       </div>
 
-      {/* Content Area */}
-      <main className="flex-1 bg-journal-content">
+      {/* Content Card */}
+      <main className="flex-1 bg-journal-content rounded-t-[30px] -mt-0">
         {/* Empty state - will be populated with journal entries */}
       </main>
     </div>
