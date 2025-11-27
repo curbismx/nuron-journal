@@ -370,11 +370,13 @@ const Note = () => {
     // Only auto-start if explicitly requested with autostart=true
     const shouldAutoStart = searchParams.get('autostart') === 'true';
     if (shouldAutoStart) {
-      // Remove the autostart parameter to prevent re-triggering
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('autostart');
-      navigate(`/note?${newSearchParams.toString()}`, { replace: true });
-      startRecording();
+      // Clear the URL parameter without navigating (prevents race condition)
+      window.history.replaceState({}, '', '/note');
+      // Small delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        startRecording();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, []);
 
