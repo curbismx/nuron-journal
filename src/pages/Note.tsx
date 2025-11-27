@@ -489,7 +489,7 @@ const Note = () => {
           <div className="flex-1" />
         </div>
         
-        <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px] -mt-[20px]">
+        <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px] -mt-[30px]">
           {monthYear}
         </h1>
       </header>
