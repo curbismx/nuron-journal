@@ -9,6 +9,10 @@ import pauseIcon from '@/assets/pause.png';
 import recordMoreIcon from '@/assets/recordmore.png';
 import stopIcon from '@/assets/stop.png';
 import playIcon from '@/assets/play.png';
+import imageButton from '@/assets/image-button.png';
+import rewriteButton from '@/assets/rewrite-button.png';
+import shareButton from '@/assets/share-button.png';
+import recordButton from '@/assets/record-button.png';
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudLightning } from 'lucide-react';
 
 const Note = () => {
@@ -355,13 +359,19 @@ const Note = () => {
 
       {/* Recording Control */}
       {!isRecording ? (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2">
-          <Button
-            onClick={startRecording}
-            className="bg-[hsl(4,73%,62%)] hover:bg-[hsl(4,73%,52%)] text-white rounded-[20px] px-8 py-6 text-[18px] font-outfit"
-          >
-            Start Recording
-          </Button>
+        <div className="fixed bottom-[30px] left-0 right-0 flex justify-evenly items-center px-8">
+          <button className="flex flex-col items-center gap-2">
+            <img src={imageButton} alt="Image" className="w-auto h-[60px]" />
+          </button>
+          <button className="flex flex-col items-center gap-2">
+            <img src={rewriteButton} alt="Rewrite" className="w-auto h-[60px]" />
+          </button>
+          <button className="flex flex-col items-center gap-2">
+            <img src={shareButton} alt="Share" className="w-auto h-[60px]" />
+          </button>
+          <button onClick={startRecording} className="flex flex-col items-center gap-2">
+            <img src={recordButton} alt="Record" className="w-auto h-[80px]" />
+          </button>
         </div>
       ) : (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-64px)] max-w-[600px]">
