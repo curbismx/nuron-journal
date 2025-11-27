@@ -4,6 +4,7 @@ import settingsIcon from "@/assets/settings.png";
 import expandIcon from "@/assets/expand.png";
 import recordBig from "@/assets/recordbig-2.png";
 import plusBig from "@/assets/plusbig.png";
+import tapToRecord from "@/assets/01.png";
 
 const Index = () => {
   return (
@@ -32,9 +33,12 @@ const Index = () => {
       <main className="flex-1 bg-journal-content rounded-t-[30px] -mt-0 flex flex-col items-center justify-center px-8">
         <div className="flex flex-col items-center gap-12">
           {/* Record Button */}
-          <button className="hover:scale-105 transition-transform">
-            <img src={recordBig} alt="Record" className="w-[200px] h-[200px]" />
-          </button>
+          <div className="flex flex-col items-center">
+            <img src={tapToRecord} alt="Tap to record instruction" className="w-[280px] mb-4" />
+            <button className="hover:scale-105 transition-transform">
+              <img src={recordBig} alt="Record" className="w-[200px] h-[200px]" />
+            </button>
+          </div>
 
           {/* Plus Button */}
           <button className="hover:scale-105 transition-transform">
