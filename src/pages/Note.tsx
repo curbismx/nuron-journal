@@ -484,13 +484,10 @@ const Note = () => {
   const monthYear = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
 
   return (
-    <div className="fixed inset-0 bg-journal-content flex flex-col">
-      {/* Fixed Header - Dark Background */}
-      <header 
-        className="fixed top-0 left-0 right-0 z-50 bg-journal-header pl-[30px] pt-[30px] pr-4 h-[150px]"
-        style={{ touchAction: 'none', position: 'relative' }}
-      >
-        <div className="flex items-center justify-between">
+    <>
+      {/* LAYER 1: Dark Header - Completely Fixed */}
+      <header className="fixed top-0 left-0 right-0 z-30 bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] h-[120px]">
+        <div className="flex items-center justify-between mb-auto">
           <Button
             variant="ghost"
             onClick={handleBack}
@@ -501,20 +498,14 @@ const Note = () => {
           <div className="flex-1" />
         </div>
         
-        <h1 className="absolute bottom-[30px] left-[30px] right-[30px] text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px]">
+        <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px] mt-4">
           {monthYear}
         </h1>
       </header>
 
-      {/* Fixed Content Card Header (Date & Title) - MUST have solid background */}
-      <div 
-        className="fixed top-[150px] left-0 right-0 z-40 rounded-t-[30px] px-8 pt-8 pb-4"
-        style={{ 
-          touchAction: 'none',
-          backgroundColor: 'hsl(var(--journal-content))'
-        }}
-      >
-        <div className="flex items-start gap-4 mb-6">
+      {/* LAYER 2: Card Header (date, title) - Fixed below dark header */}
+      <div className="fixed top-[120px] left-0 right-0 z-20 bg-journal-content rounded-t-[30px] px-8 pt-8 pb-4">
+        <div className="flex items-start gap-4 mb-4">
           <div className="text-[72px] font-outfit font-bold leading-none text-[hsl(0,0%,0%)]">{dayNumber}</div>
           <div className="flex flex-col">
             <div className="text-[20px] font-outfit font-light tracking-wide text-[hsl(0,0%,0%)] mt-[2px]">{dayName}</div>
@@ -532,58 +523,44 @@ const Note = () => {
           value={noteTitle}
           onChange={(e) => setNoteTitle(e.target.value || 'Note Title')}
           disabled={isRecording}
-          className="text-[28px] font-outfit font-semibold mb-4 text-[hsl(0,0%,0%)] -mt-2 outline-none bg-transparent border-none w-full disabled:opacity-100"
+          className="text-[28px] font-outfit font-semibold text-[hsl(0,0%,0%)] outline-none bg-transparent border-none w-full disabled:opacity-100"
           placeholder="Note Title"
         />
       </div>
 
-      {/* Scrollable Text Content ONLY - Outer wrapper clips overflow */}
-      <div 
-        className="fixed left-0 right-0 z-30"
-        style={{ 
-          top: 'calc(150px + 180px)', 
-          bottom: '160px',
-          overflow: 'hidden'
-        }}
-      >
-        {/* Inner scrollable container */}
+      {/* LAYER 3: Scrollable Text Area - Fixed position with internal scroll */}
+      <div className="fixed top-[290px] bottom-[160px] left-0 right-0 z-10 bg-journal-content overflow-hidden">
         <div 
-          className="h-full px-8"
-          style={{ 
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
-            backgroundColor: 'hsl(var(--journal-content))'
-          }}
+          className="h-full overflow-y-auto px-8 pb-8"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          {/* Add padding-top for breathing room */}
-          <div className="pt-4 pb-[30px]">
-            <textarea
-              ref={textContentRef as any}
-              value={transcribedText}
-              onChange={(e) => {
-                setTranscribedText(e.target.value);
-                transcribedTextRef.current = e.target.value;
-              }}
-              placeholder="Start speaking to transcribe..."
-              className="w-full h-full min-h-[300px] resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,0%)] placeholder:text-[hsl(0,0%,60%)]"
-              readOnly={isRecording}
-            />
-            {interimText && isRecording && (
-              <div className="sticky bottom-0 left-0 right-0 pb-4 pointer-events-none">
-                <span className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,40%)]">
-                  {interimText}
-                </span>
-              </div>
-            )}
-          </div>
+          <textarea
+            ref={textContentRef as any}
+            value={transcribedText}
+            onChange={(e) => {
+              setTranscribedText(e.target.value);
+              transcribedTextRef.current = e.target.value;
+            }}
+            placeholder="Start speaking to transcribe..."
+            className="w-full min-h-full resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,0%)] placeholder:text-[hsl(0,0%,60%)]"
+            readOnly={isRecording}
+          />
         </div>
+        {interimText && isRecording && (
+          <div className="absolute bottom-4 left-8 right-8 pointer-events-none">
+            <span className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,40%)]">
+              {interimText}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Fixed Recording Controls at Bottom - Two States */}
+      {/* LAYER 4: Bottom fill to cover gap */}
+      <div className="fixed bottom-0 left-0 right-0 h-[160px] z-5 bg-journal-content" />
+
+      {/* LAYER 5: Recording Controls - Fixed at bottom */}
       {isRecording ? (
-        /* STATE 1: Big red box with recording controls */
-        <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 w-[calc(100%-60px)] max-w-[600px] z-50" style={{ touchAction: 'none' }}>
+        <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 w-[calc(100%-60px)] max-w-[600px] z-40">
           <div className="bg-[hsl(4,73%,62%)] rounded-[20px] p-6 h-[108px]">
             <div className="flex items-center gap-4 h-full relative">
               <div className="flex items-center gap-[30px]">
@@ -634,8 +611,7 @@ const Note = () => {
           </div>
         </div>
       ) : (
-        /* STATE 2: 4 medium buttons when stopped */
-        <div className="fixed bottom-[30px] left-[30px] right-[30px] flex justify-between items-center gap-[10px] z-50" style={{ touchAction: 'none' }}>
+        <div className="fixed bottom-[30px] left-[30px] right-[30px] z-40 flex justify-between items-center gap-[10px]">
           <button className="flex flex-col items-center gap-2">
             <img src={imageButton2} alt="Image" className="h-auto" />
           </button>
@@ -661,7 +637,7 @@ const Note = () => {
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
