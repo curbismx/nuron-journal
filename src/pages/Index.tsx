@@ -40,7 +40,7 @@ const Index = () => {
           <div className="flex flex-col items-center">
             <img src={tapToRecord} alt="Tap to record instruction" className="w-[280px] mb-4" />
             <button 
-              onClick={() => navigate('/note')}
+              onClick={() => navigate('/note?autostart=true')}
               className="hover:scale-105 transition-transform"
             >
               <img src={recordBig} alt="Record" className="w-[200px] h-[200px]" />
