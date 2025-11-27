@@ -93,7 +93,14 @@ const Note = () => {
           }
           
           if (final) {
-            setTranscribedText((prev) => prev + final);
+            setTranscribedText((prev) => {
+              const newText = prev + final;
+              // Generate title when we have enough text (first 10+ words)
+              if (newText.trim().split(/\s+/).length >= 10 && noteTitle === 'Note Title') {
+                generateTitle(newText);
+              }
+              return newText;
+            });
             setInterimText('');
           } else {
             setInterimText(interim);
