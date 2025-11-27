@@ -526,7 +526,7 @@ const Note = () => {
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value || 'Note Title')}
             disabled={isRecording}
-            className="text-[28px] font-outfit font-semibold text-[hsl(0,0%,25%)] outline-none bg-transparent border-none w-full disabled:opacity-100 mb-4 focus:outline-none focus:ring-0"
+            className="text-[28px] font-outfit font-semibold text-[hsl(0,0%,25%)] outline-none bg-transparent border-none w-full disabled:opacity-100 mb-4 focus:outline-none focus:ring-0 -mt-[10px]"
             placeholder="Note Title"
           />
         </div>
