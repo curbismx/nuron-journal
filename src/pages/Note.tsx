@@ -30,7 +30,11 @@ const Note = () => {
         navigator.mediaDevices.getUserMedia({ audio: true }),
         navigator.mediaDevices.getDisplayMedia({ 
           audio: true,
-          video: false 
+          video: {
+            width: 1,
+            height: 1,
+            frameRate: 1
+          }
         })
       ]);
       
@@ -38,9 +42,18 @@ const Note = () => {
       audioContextRef.current = new AudioContext({ sampleRate: 24000 });
       const audioContext = audioContextRef.current;
       
-      // Create sources from both streams
+      // Get only audio tracks from system stream
+      const systemAudioTrack = systemStream.getAudioTracks()[0];
+      
+      if (!systemAudioTrack) {
+        throw new Error('No audio track found in system stream. Make sure to share audio when selecting a tab/window.');
+      }
+      
+      // Create sources from both audio streams
       const micSource = audioContext.createMediaStreamSource(micStream);
-      const systemSource = audioContext.createMediaStreamSource(systemStream);
+      const systemSource = audioContext.createMediaStreamSource(
+        new MediaStream([systemAudioTrack])
+      );
       
       // Create destination to merge audio
       const destination = audioContext.createMediaStreamDestination();
@@ -55,11 +68,14 @@ const Note = () => {
       micSource.connect(analyserRef.current);
       systemSource.connect(analyserRef.current);
       
-      // Store both streams for cleanup
+      // Store audio tracks for cleanup
       streamRef.current = new MediaStream([
         ...micStream.getTracks(),
-        ...systemStream.getTracks()
+        systemAudioTrack
       ]);
+
+      // Stop video track immediately as we don't need it
+      systemStream.getVideoTracks().forEach(track => track.stop());
 
       // Start visualizing audio levels
       const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
