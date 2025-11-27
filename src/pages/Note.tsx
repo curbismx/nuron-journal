@@ -466,12 +466,12 @@ const Note = () => {
     return () => clearInterval(interval);
   }, [isRecording, isPaused]);
 
-  // Auto-scroll to bottom when text updates
+  // Auto-scroll to bottom only when final text is added (not interim)
   useEffect(() => {
-    if (scrollContainerRef.current) {
+    if (scrollContainerRef.current && !isRecording) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [transcribedText, interimText]);
+  }, [transcribedText, isRecording]);
 
   const handleBack = () => {
     stopRecording();
@@ -536,7 +536,7 @@ const Note = () => {
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           <textarea
-            value={transcribedText + (isRecording && interimText ? interimText : '')}
+            value={transcribedText}
             onChange={(e) => {
               setTranscribedText(e.target.value);
               transcribedTextRef.current = e.target.value;
@@ -545,6 +545,11 @@ const Note = () => {
             className="w-full min-h-full resize-none bg-transparent border-none outline-none text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)]"
             readOnly={isRecording}
           />
+          {interimText && isRecording && (
+            <span className="text-[18px] font-outfit leading-relaxed text-[hsl(0,0%,60%)] italic">
+              {interimText}
+            </span>
+          )}
         </div>
       </div>
 
