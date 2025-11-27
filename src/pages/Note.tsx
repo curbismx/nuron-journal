@@ -197,7 +197,7 @@ const Note = () => {
       </div>
 
       {/* Content */}
-      <main className="flex-1 bg-journal-content px-8 pt-8 pb-32">
+      <main className="flex-1 bg-journal-content rounded-t-[30px] -mt-0 px-8 pt-8 pb-32">
         <div className="flex items-baseline gap-4 mb-6">
           <div className="text-[72px] font-outfit font-light leading-none">{dayNumber}</div>
           <div className="text-[18px] font-outfit font-light tracking-wide">{dayName}</div>
