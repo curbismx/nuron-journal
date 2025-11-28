@@ -17,6 +17,7 @@ const Note = () => {
   const [weather, setWeather] = useState<{ temp: number; WeatherIcon: React.ComponentType<any> } | null>(null);
   const [isRewriting, setIsRewriting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [titleGenerated, setTitleGenerated] = useState(false);
   
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textContentRef = useRef<HTMLTextAreaElement | null>(null);
@@ -35,6 +36,7 @@ const Note = () => {
 
       if (data.title) {
         setNoteTitle(data.title);
+        setTitleGenerated(true);
       }
     } catch (error) {
       console.error('Title generation error:', error);
@@ -108,12 +110,12 @@ const Note = () => {
     fetchWeather();
   }, []);
 
-  // Auto-generate title when user has written enough
+  // Auto-generate title when user has written enough (only once)
   useEffect(() => {
-    if (noteContent.trim().split(/\s+/).length >= 10 && noteTitle === 'Note Title') {
+    if (noteContent.trim().split(/\s+/).length >= 10 && !titleGenerated) {
       generateTitle(noteContent);
     }
-  }, [noteContent, noteTitle]);
+  }, [noteContent, titleGenerated]);
 
   // Click outside handler to close menu
   useEffect(() => {
