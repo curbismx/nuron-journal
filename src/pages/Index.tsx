@@ -5,7 +5,7 @@ import recordButton from "@/assets/rbigecordbutton.png";
 import textImage from "@/assets/text.png";
 import plusIcon from "@/assets/plusbig.png";
 import threeDotsIcon from "@/assets/3dots.png";
-import floatingAddButton from "@/assets/red-button-noshadow.png";
+import floatingAddButton from "@/assets/bigredbuttonnoshadow.png";
 
 interface SavedNote {
   id: string;
@@ -200,8 +200,7 @@ const Index = () => {
         className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer"
         style={{
           width: '51px',
-          height: '51px',
-          filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15))'
+          height: '51px'
         }}
       />
     </div>
