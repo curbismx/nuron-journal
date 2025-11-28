@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import backIcon from '@/assets/back.png';
 import threeDotsIcon from '@/assets/3dots.png';
+import starIcon from '@/assets/star.png';
+import addImageIcon from '@/assets/addimage.png';
+import sharedIcon from '@/assets/shared.png';
+import trashIcon from '@/assets/trash.png';
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudLightning } from 'lucide-react';
 
 const Note = () => {
@@ -12,9 +16,11 @@ const Note = () => {
   const [noteTitle, setNoteTitle] = useState('Note Title');
   const [weather, setWeather] = useState<{ temp: number; WeatherIcon: React.ComponentType<any> } | null>(null);
   const [isRewriting, setIsRewriting] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textContentRef = useRef<HTMLTextAreaElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const generateTitle = async (text: string) => {
     try {
@@ -109,10 +115,39 @@ const Note = () => {
     }
   }, [noteContent, noteTitle]);
 
+  // Click outside handler to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const handleBack = () => {
     navigate('/');
   };
+
+  const handleMenuAction = (action: string) => {
+    console.log(`Menu action: ${action}`);
+    if (action === 'rewrite') {
+      rewriteText();
+    }
+    setMenuOpen(false);
+  };
+
+  // Calculate stats
+  const wordCount = noteContent.trim() ? noteContent.trim().split(/\s+/).length : 0;
+  const characterCount = noteContent.length;
+  const paragraphCount = noteContent.trim() ? noteContent.split(/\n\n+/).filter(p => p.trim()).length : 0;
 
   const today = new Date();
   const dayNumber = today.getDate();
@@ -137,7 +172,12 @@ const Note = () => {
           <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px]">
             {monthYear}
           </h1>
-          <img src={threeDotsIcon} alt="Menu" className="h-[24px] w-auto absolute right-[30px] top-0" />
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="absolute right-[30px] top-0"
+          >
+            <img src={threeDotsIcon} alt="Menu" className="h-[24px] w-auto" />
+          </button>
         </div>
       </header>
 
@@ -153,6 +193,7 @@ const Note = () => {
         onClick={(e) => {
           // If clicking directly on the scroll container (not on inputs), blur active element
           if (e.target === e.currentTarget || (e.target as HTMLElement).tagName === 'DIV') {
+            setMenuOpen(false);
             if (document.activeElement instanceof HTMLElement) {
               document.activeElement.blur();
             }
@@ -216,6 +257,65 @@ const Note = () => {
         <div className="h-[1px]" />
         </div>
       </div>
+
+      {/* Dropdown Menu */}
+      {menuOpen && (
+        <div 
+          ref={menuRef}
+          className="fixed right-[20px] top-[140px] z-50 bg-white rounded-2xl shadow-lg py-4 w-[220px] animate-in fade-in-0 zoom-in-95 duration-200"
+        >
+          {/* Section 1 - Actions */}
+          <div className="flex flex-col">
+            <button 
+              onClick={() => handleMenuAction('rewrite')} 
+              className="flex items-center gap-4 px-6 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <img src={starIcon} alt="" className="w-6 h-6" />
+              <span className="text-gray-600 font-outfit">AI Rewrite</span>
+            </button>
+            <button 
+              onClick={() => handleMenuAction('image')} 
+              className="flex items-center gap-4 px-6 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <img src={addImageIcon} alt="" className="w-6 h-6" />
+              <span className="text-gray-600 font-outfit">Add Image</span>
+            </button>
+            <button 
+              onClick={() => handleMenuAction('share')} 
+              className="flex items-center gap-4 px-6 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <img src={sharedIcon} alt="" className="w-6 h-6" />
+              <span className="text-gray-600 font-outfit">Share Note</span>
+            </button>
+            <button 
+              onClick={() => handleMenuAction('delete')} 
+              className="flex items-center gap-4 px-6 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <img src={trashIcon} alt="" className="w-6 h-6" />
+              <span className="text-red-500 font-outfit">Delete Note</span>
+            </button>
+          </div>
+          
+          {/* Divider */}
+          <div className="border-t border-gray-200 my-3 mx-4" />
+          
+          {/* Section 2 - Stats */}
+          <div className="flex flex-col px-6 gap-2">
+            <div className="flex items-center gap-4 py-1">
+              <span className="font-outfit font-bold text-gray-400 w-12">{wordCount}</span>
+              <span className="font-outfit text-gray-300">Words</span>
+            </div>
+            <div className="flex items-center gap-4 py-1">
+              <span className="font-outfit font-bold text-gray-400 w-12">{characterCount}</span>
+              <span className="font-outfit text-gray-300">Characters</span>
+            </div>
+            <div className="flex items-center gap-4 py-1">
+              <span className="font-outfit font-bold text-gray-400 w-12">{paragraphCount}</span>
+              <span className="font-outfit text-gray-300">Paragraphs</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
