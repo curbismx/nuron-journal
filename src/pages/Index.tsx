@@ -116,13 +116,7 @@ const Index = () => {
           <button className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity">
             <img src={settingsIcon} alt="Settings" className="w-[30px] h-[30px]" />
           </button>
-          
-          <button 
-            onClick={() => navigate('/note')}
-            className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity"
-          >
-            <img src={plusIcon} alt="Create Note" className="w-[30px] h-[30px]" />
-          </button>
+          <div className="flex-1" />
         </div>
         <div className="relative mt-[41px]">
           <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px]">
