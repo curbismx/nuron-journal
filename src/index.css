@@ -101,3 +101,19 @@ All colors MUST be HSL.
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* AI Rewriting glow animation */
+@keyframes ai-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px 0px rgba(147, 112, 219, 0.3), 
+                0 0 40px 0px rgba(147, 112, 219, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px 5px rgba(147, 112, 219, 0.5), 
+                0 0 60px 10px rgba(147, 112, 219, 0.2);
+  }
+}
+
+.ai-rewriting {
+  animation: ai-glow 1.5s ease-in-out infinite;
+}
