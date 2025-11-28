@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import settingsIcon from "@/assets/settings-2.png";
+import recordButton from "@/assets/rbigecordbutton.png";
+import textImage from "@/assets/text.png";
 import plusIcon from "@/assets/plusbig.png";
 import threeDotsIcon from "@/assets/3dots.png";
 
@@ -76,20 +78,30 @@ const Index = () => {
 
         {/* Main Content - Centered */}
         <main className="flex-1 flex flex-col items-center justify-center px-8">
-          {/* Red Record Button */}
-          <button 
-            onClick={() => navigate('/note')}
-            className="hover:scale-105 transition-transform"
-            style={{
-              filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
-            }}
-          >
+          {/* Text and Record Button Container */}
+          <div className="relative">
+            {/* Handwritten Text Image */}
             <img 
-              src={plusIcon} 
-              alt="Create Note" 
-              className="w-[100px] h-[100px]"
+              src={textImage} 
+              alt="Instructions" 
+              className="w-full max-w-[320px] mt-[60px]"
             />
-          </button>
+            
+            {/* Red Record Button - Overlaid on text */}
+            <button 
+              onClick={() => navigate('/note')}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -mt-[15px] hover:scale-105 transition-transform"
+              style={{
+                filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
+              }}
+            >
+              <img 
+                src={recordButton} 
+                alt="Record" 
+                className="w-[100px] h-[100px]"
+              />
+            </button>
+          </div>
         </main>
       </div>
     );
