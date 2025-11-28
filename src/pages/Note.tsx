@@ -362,18 +362,12 @@ const Note = () => {
           minHeight: 0
         }}
         onClick={(e) => {
-          const target = e.target as HTMLElement;
-          // If tapping on the scroll container itself or empty space (not inputs, images, or buttons)
-          if (
-            target.tagName !== 'TEXTAREA' && 
-            target.tagName !== 'INPUT' && 
-            target.tagName !== 'IMG' &&
-            target.tagName !== 'BUTTON' &&
-            target.tagName !== 'SVG' &&
-            target.tagName !== 'PATH'
-          ) {
+          // If clicking directly on the scroll container (not on inputs), blur active element
+          if (e.target === e.currentTarget || (e.target as HTMLElement).tagName === 'DIV') {
             setMenuOpen(false);
-            textContentRef.current?.focus();
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
           }
         }}
       >
@@ -467,7 +461,7 @@ const Note = () => {
         )}
         
         {/* Spacer */}
-        <div className="h-[120px] flex-shrink-0" />
+        <div className="h-[40px] flex-shrink-0" />
         <div className="h-[1px]" />
         </div>
       </div>
