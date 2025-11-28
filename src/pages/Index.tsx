@@ -197,8 +197,10 @@ const Index = () => {
         src={floatingAddButton} 
         alt="Add Note"
         onClick={() => navigate('/note')}
-        className="fixed bottom-[30px] right-[30px] z-50 w-[51px] h-[51px] cursor-pointer hover:scale-105 transition-transform"
+        className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer"
         style={{
+          width: '51px',
+          height: '51px',
           filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15))'
         }}
       />
