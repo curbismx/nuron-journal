@@ -211,7 +211,7 @@ const Index = () => {
                           <img 
                             src={smallArrow} 
                             alt="" 
-                            className="absolute right-[30px] top-1/2 -translate-y-1/2 w-[20px] h-auto"
+                            className="absolute right-[-2px] top-1/2 -translate-y-1/2 w-[20px] h-auto"
                           />
                         </div>
                       </div>
