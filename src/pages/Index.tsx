@@ -193,19 +193,15 @@ const Index = () => {
       </div>
 
       {/* Floating add button */}
-      <button
+      <img 
+        src={floatingAddButton} 
+        alt="Add Note"
         onClick={() => navigate('/note')}
-        className="fixed bottom-[30px] right-[30px] z-50 hover:scale-105 transition-transform p-0 m-0 border-0 bg-transparent"
+        className="fixed bottom-[30px] right-[30px] z-50 w-[51px] h-[51px] cursor-pointer hover:scale-105 transition-transform"
         style={{
           filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15))'
         }}
-      >
-        <img 
-          src={floatingAddButton} 
-          alt="Add Note" 
-          className="w-[51px] h-[51px]"
-        />
-      </button>
+      />
     </div>
   );
 };
