@@ -18,10 +18,12 @@ const Note = () => {
   const [isRewriting, setIsRewriting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [titleGenerated, setTitleGenerated] = useState(false);
+  const [images, setImages] = useState<Array<{id: string, url: string, width: number}>>([]);
   
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const textContentRef = useRef<HTMLTextAreaElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const generateTitle = async (text: string) => {
     try {
@@ -138,10 +140,23 @@ const Note = () => {
     navigate('/');
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = URL.createObjectURL(file);
+    const id = Date.now().toString();
+    
+    setImages(prev => [...prev, { id, url, width: 100 }]);
+    e.target.value = '';
+  };
+
   const handleMenuAction = (action: string) => {
     console.log(`Menu action: ${action}`);
     if (action === 'rewrite') {
       rewriteText();
+    } else if (action === 'image') {
+      fileInputRef.current?.click();
     }
     setMenuOpen(false);
   };
@@ -253,6 +268,22 @@ const Note = () => {
             style={{ minHeight: '100px' }}
           />
         </div>
+
+        {/* Images section - after textarea */}
+        {images.length > 0 && (
+          <div className="px-8 pb-4">
+            {images.map((image, index) => (
+              <div key={image.id} className="relative my-4">
+                <img 
+                  src={image.url} 
+                  alt=""
+                  className="rounded-[5px]"
+                  style={{ width: `${image.width}%` }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
         
         {/* Spacer */}
         <div className="h-[40px] flex-shrink-0" />
@@ -318,6 +349,16 @@ const Note = () => {
           </div>
         </div>
       )}
+
+      {/* Hidden file input */}
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleImageSelect}
+      />
 
     </div>
   );
