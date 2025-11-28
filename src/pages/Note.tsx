@@ -405,17 +405,27 @@ const Note = () => {
             onChange={(e) => {
               setNoteContent(e.target.value);
               e.target.style.height = 'auto';
-              e.target.style.height = Math.max(24, e.target.scrollHeight) + 'px';
+              e.target.style.height = e.target.scrollHeight + 'px';
+              
+              // Scroll cursor into view after a brief delay
+              setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 50);
+            }}
+            onFocus={(e) => {
+              setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 300);
             }}
             placeholder="Start writing..."
             className="w-full resize-none bg-transparent border-none outline-none text-[16px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)] focus:outline-none focus:ring-0 overflow-hidden"
-            style={{ minHeight: '24px' }}
+            style={{ minHeight: '100px' }}
           />
         </div>
 
-        {/* Images section */}
+        {/* Images section - after textarea */}
         {images.length > 0 && (
-          <div className="px-8">
+          <div className="px-8 pb-4">
             {images.map((image, index) => (
               <div 
                 key={image.id} 
@@ -425,22 +435,17 @@ const Note = () => {
                 <img 
                   src={image.url} 
                   alt=""
-                  className="rounded-[10px] w-full h-auto block cursor-pointer"
+                  className="rounded-[10px] w-full h-auto block"
                   onClick={() => openImageViewer(index)}
                 />
                 
-                {/* Resize handle */}
+                {/* Resize handle - bottom right corner */}
                 <div
                   className="absolute bottom-2 right-2 w-6 h-6 cursor-se-resize touch-none"
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    startResize(e, image.id);
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation();
-                    startResizeTouch(e, image.id);
-                  }}
+                  onMouseDown={(e) => startResize(e, image.id)}
+                  onTouchStart={(e) => startResizeTouch(e, image.id)}
                 >
+                  {/* Triangle shape */}
                   <svg 
                     viewBox="0 0 24 24" 
                     className="w-full h-full text-white drop-shadow-md"
@@ -452,34 +457,6 @@ const Note = () => {
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Text area below images */}
-        {images.length > 0 && (
-          <div className="px-8 pb-4">
-            <textarea
-              value=""
-              onChange={(e) => {
-                // Append new text to main noteContent
-                setNoteContent(prev => prev + e.target.value);
-                // Clear this textarea
-                e.target.value = '';
-                // Focus main textarea at end
-                setTimeout(() => {
-                  if (textContentRef.current) {
-                    textContentRef.current.focus();
-                    const len = noteContent.length + e.target.value.length;
-                    textContentRef.current.setSelectionRange(len, len);
-                    textContentRef.current.style.height = 'auto';
-                    textContentRef.current.style.height = textContentRef.current.scrollHeight + 'px';
-                  }
-                }, 0);
-              }}
-              placeholder="Continue writing..."
-              className="w-full resize-none bg-transparent border-none outline-none text-[16px] font-outfit leading-relaxed text-[hsl(0,0%,25%)] placeholder:text-[hsl(0,0%,60%)] focus:outline-none focus:ring-0"
-              style={{ minHeight: '44px' }}
-            />
           </div>
         )}
         
