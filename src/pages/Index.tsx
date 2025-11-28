@@ -23,7 +23,7 @@ const Index = () => {
           <img 
             src={textImage} 
             alt="Instructions" 
-            className="w-full max-w-[320px] mt-[15px]"
+            className="w-full max-w-[320px] mt-[30px]"
           />
           
           {/* Red Record Button - Overlaid on text */}
