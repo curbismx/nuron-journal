@@ -144,6 +144,7 @@ const Note = () => {
   // Load existing note on mount
   useEffect(() => {
     if (id) {
+      noteIdRef.current = id;  // Ensure ref matches the loaded note ID
       const stored = localStorage.getItem('nuron-notes');
       if (stored) {
         const notes: SavedNote[] = JSON.parse(stored);
