@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import settingsIcon from "@/assets/settings-2.png";
-import recordButton from "@/assets/rbigecordbutton.png";
+import newPlusIcon from "@/assets/new_plus.png";
 import textImage from "@/assets/text.png";
 import plusIcon from "@/assets/plusbig.png";
 import expandIcon from "@/assets/expand-2.png";
@@ -113,7 +113,7 @@ const Index = () => {
               }}
             >
               <img 
-                src={recordButton} 
+                src={newPlusIcon} 
                 alt="Record" 
                 className="w-[100px] h-[100px]"
               />
@@ -227,7 +227,7 @@ const Index = () => {
 
       {/* Floating add button */}
       <img 
-        src={recordButton} 
+        src={newPlusIcon} 
         alt="Add Note"
         onClick={() => navigate('/note')}
         className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[51px] h-[51px]"
