@@ -199,36 +199,50 @@ const Index = () => {
                         
                         {/* Title and Body Container */}
                         <div className="pr-[50px] relative">
-                          {/* Image thumbnail if exists */}
-                          {firstImage && (
-                            <div 
-                              className={`float-right ml-[15px] mb-[10px] ${index === 0 ? '' : 'mt-[0px]'}`}
-                              style={{ marginRight: '0px' }}
-                            >
-                              <img 
-                                src={firstImage.url} 
-                                alt=""
-                                className="w-[70px] h-[70px] rounded-[10px] object-cover"
-                              />
-                            </div>
-                          )}
-                          
-                          {/* Title */}
-                          <h3 className={`text-[24px] font-outfit font-semibold text-[hsl(0,0%,25%)] mb-4 ${index === 0 ? '-mt-[10px]' : ''}`}>
-                            {note.title || 'Untitled'}
-                          </h3>
-                          
-                          {/* Body preview - 2 lines max (or 13 when expanded) */}
-                          <p className={`text-[14px] font-outfit text-[hsl(0,0%,50%)] ${menuOpen ? 'line-clamp-[13]' : 'line-clamp-2'} -mt-[10px]`}>
-                            {preview || 'No content'}
-                          </p>
-
-                          {/* Arrow icon */}
+                          {/* Arrow icon - always in same position */}
                           <img 
                             src={smallArrow} 
                             alt="" 
                             className="absolute right-[-2px] top-1/2 -translate-y-1/2 w-[20px] h-auto"
                           />
+
+                          {menuOpen ? (
+                            /* EXPANDED VIEW - image floats, text wraps around and underneath */
+                            <>
+                              {firstImage && (
+                                <img 
+                                  src={firstImage.url} 
+                                  alt=""
+                                  className="float-right w-[70px] h-[70px] rounded-[10px] object-cover ml-[15px] mb-[10px]"
+                                />
+                              )}
+                              <h3 className={`text-[24px] font-outfit font-semibold text-[hsl(0,0%,25%)] mb-4 ${index === 0 ? '-mt-[10px]' : ''}`}>
+                                {note.title || 'Untitled'}
+                              </h3>
+                              <p className="text-[14px] font-outfit text-[hsl(0,0%,50%)] line-clamp-[13] -mt-[10px]">
+                                {preview || 'No content'}
+                              </p>
+                            </>
+                          ) : (
+                            /* COLLAPSED VIEW - image vertically centered with content */
+                            <div className="flex items-center gap-[15px]">
+                              <div className="flex-1">
+                                <h3 className={`text-[24px] font-outfit font-semibold text-[hsl(0,0%,25%)] mb-4 ${index === 0 ? '-mt-[10px]' : ''}`}>
+                                  {note.title || 'Untitled'}
+                                </h3>
+                                <p className="text-[14px] font-outfit text-[hsl(0,0%,50%)] line-clamp-2 -mt-[10px]">
+                                  {preview || 'No content'}
+                                </p>
+                              </div>
+                              {firstImage && (
+                                <img 
+                                  src={firstImage.url} 
+                                  alt=""
+                                  className="w-[70px] h-[70px] rounded-[10px] object-cover flex-shrink-0"
+                                />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
