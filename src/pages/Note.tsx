@@ -33,6 +33,7 @@ const Note = () => {
   const [isRewriting, setIsRewriting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [titleGenerated, setTitleGenerated] = useState(false);
+  const [titleManuallyEdited, setTitleManuallyEdited] = useState(false);
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
     { type: 'text', id: 'initial', content: '' }
   ]);
@@ -218,10 +219,10 @@ const Note = () => {
   // Auto-generate title when user has written enough (only once)
   useEffect(() => {
     const noteContent = getNoteContent();
-    if (noteContent.trim().split(/\s+/).length >= 10 && !titleGenerated) {
+    if (noteContent.trim().split(/\s+/).length >= 10 && !titleGenerated && !titleManuallyEdited) {
       generateTitle(noteContent);
     }
-  }, [contentBlocks, titleGenerated]);
+  }, [contentBlocks, titleGenerated, titleManuallyEdited]);
 
   // Click outside handler to close menu
   useEffect(() => {
@@ -537,7 +538,10 @@ const Note = () => {
           <input
             type="text"
             value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
+            onChange={(e) => {
+              setNoteTitle(e.target.value);
+              setTitleManuallyEdited(true);
+            }}
             placeholder="Note Title"
             className="text-[24px] font-outfit font-semibold text-[hsl(0,0%,25%)] outline-none bg-transparent border-none w-full mb-4 focus:outline-none focus:ring-0 -mt-[10px] placeholder:text-[hsl(60,1%,66%)]"
           />
