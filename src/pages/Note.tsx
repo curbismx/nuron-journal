@@ -586,8 +586,8 @@ const Note = () => {
               onClick={() => handleMenuAction('rewrite')} 
               className="flex items-center gap-8 px-6 py-3 hover:bg-gray-50 transition-colors"
             >
-              <img src={starIcon} alt="" className="w-6 h-6" />
-              <span className="font-outfit ai-shimmer-text">AI Rewrite</span>
+              <img src={starIcon} alt="" className="w-6 h-6 star-glow" />
+              <span className="text-gray-600 font-outfit">AI Rewrite</span>
             </button>
             <button 
               onClick={() => handleMenuAction('image')} 
