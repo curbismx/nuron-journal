@@ -17,6 +17,7 @@ import starIcon from '@/assets/star.png';
 import addImageIcon from '@/assets/addimage.png';
 import sharedIcon from '@/assets/shared.png';
 import trashIcon from '@/assets/trash.png';
+import newPlusIcon from '@/assets/new_plus.png';
 import { Sun, Cloud, CloudRain, CloudSnow, CloudDrizzle, CloudFog, CloudLightning } from 'lucide-react';
 
 type ContentBlock = 
@@ -722,6 +723,20 @@ const Note = () => {
           )}
         </div>
       )}
+
+      {/* Floating add button */}
+      <img 
+        src={newPlusIcon} 
+        alt="Add Note"
+        onClick={() => {
+          saveNote();
+          window.location.href = '/note';
+        }}
+        className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[51px] h-[51px]"
+        style={{
+          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
+        }}
+      />
 
     </div>
   );
