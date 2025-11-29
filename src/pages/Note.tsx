@@ -856,7 +856,7 @@ const Note = () => {
       {/* Delete confirmation dialog */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-[hsl(42,30%,94%)] rounded-2xl p-6 mx-6 max-w-[320px] w-full shadow-xl relative">
+          <div className="bg-white rounded-2xl p-6 mx-6 w-[80%] shadow-xl relative">
             {/* X close button */}
             <button
               onClick={() => setShowDeleteConfirm(false)}
@@ -866,7 +866,7 @@ const Note = () => {
             </button>
             
             <p className="text-[18px] font-outfit font-medium text-[hsl(0,0%,30%)] text-center mt-4 mb-8 leading-relaxed">
-              Are you sure you want to delete the<br />current note?
+              Are you sure you want to delete the current note?
             </p>
             
             <div className="flex gap-3">
