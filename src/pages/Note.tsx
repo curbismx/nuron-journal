@@ -36,7 +36,6 @@ const Note = () => {
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
     { type: 'text', id: 'initial', content: '' }
   ]);
-  const [resizingId, setResizingId] = useState<string | null>(null);
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const touchStartX = useRef<number>(0);
@@ -44,9 +43,6 @@ const Note = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resizeStartX = useRef<number>(0);
-  const resizeStartWidth = useRef<number>(0);
-  const resizingIdRef = useRef<string | null>(null);
   const activeTextBlockRef = useRef<{ id: string; cursorPosition: number } | null>(null);
 
   const generateTitle = async (text: string) => {
@@ -218,10 +214,6 @@ const Note = () => {
     fetchWeather();
   }, []);
 
-  // Keep ref in sync
-  useEffect(() => {
-    resizingIdRef.current = resizingId;
-  }, [resizingId]);
 
   // Auto-generate title when user has written enough (only once)
   useEffect(() => {
@@ -280,10 +272,6 @@ const Note = () => {
   useEffect(() => {
     return () => {
       saveNote();
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [noteTitle, contentBlocks]);
 
@@ -373,69 +361,61 @@ const Note = () => {
 
   const startResize = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
-    setResizingId(id);
-    resizeStartX.current = e.clientX;
+    e.stopPropagation();
+    
+    const startX = e.clientX;
     const block = contentBlocks.find(b => b.type === 'image' && b.id === id) as { type: 'image'; id: string; url: string; width: number } | undefined;
-    resizeStartWidth.current = block?.width ?? 100;
+    const startWidth = block?.width ?? 100;
+    
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const containerWidth = scrollContainerRef.current?.clientWidth ?? 300;
+      const deltaPercent = (deltaX / containerWidth) * 100;
+      const newWidth = Math.min(100, Math.max(30, startWidth + deltaPercent));
+      
+      setContentBlocks(prev => prev.map(b => 
+        b.type === 'image' && b.id === id ? { ...b, width: newWidth } : b
+      ));
+    };
+    
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!resizingIdRef.current) return;
-    
-    const deltaX = e.clientX - resizeStartX.current;
-    const containerWidth = scrollContainerRef.current?.clientWidth ?? 300;
-    const deltaPercent = (deltaX / containerWidth) * 100;
-    const newWidth = Math.min(100, Math.max(30, resizeStartWidth.current + deltaPercent));
-    
-    setContentBlocks(prev => prev.map(block => 
-      block.type === 'image' && block.id === resizingIdRef.current 
-        ? { ...block, width: newWidth } 
-        : block
-    ));
-  };
-
-  const handleMouseUp = () => {
-    setResizingId(null);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
   const startResizeTouch = (e: React.TouchEvent, id: string) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     const touch = e.touches[0];
-    setResizingId(id);
-    resizeStartX.current = touch.clientX;
+    const startX = touch.clientX;
     const block = contentBlocks.find(b => b.type === 'image' && b.id === id) as { type: 'image'; id: string; url: string; width: number } | undefined;
-    resizeStartWidth.current = block?.width ?? 100;
+    const startWidth = block?.width ?? 100;
+    
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      moveEvent.preventDefault();
+      const moveTouch = moveEvent.touches[0];
+      const deltaX = moveTouch.clientX - startX;
+      const containerWidth = scrollContainerRef.current?.clientWidth ?? 300;
+      const deltaPercent = (deltaX / containerWidth) * 100;
+      const newWidth = Math.min(100, Math.max(30, startWidth + deltaPercent));
+      
+      setContentBlocks(prev => prev.map(b => 
+        b.type === 'image' && b.id === id ? { ...b, width: newWidth } : b
+      ));
+    };
+    
+    const handleTouchEnd = () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
     
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!resizingIdRef.current) return;
-    e.preventDefault();
-    
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - resizeStartX.current;
-    const containerWidth = scrollContainerRef.current?.clientWidth ?? 300;
-    const deltaPercent = (deltaX / containerWidth) * 100;
-    const newWidth = Math.min(100, Math.max(30, resizeStartWidth.current + deltaPercent));
-    
-    setContentBlocks(prev => prev.map(block => 
-      block.type === 'image' && block.id === resizingIdRef.current 
-        ? { ...block, width: newWidth } 
-        : block
-    ));
-  };
-
-  const handleTouchEnd = () => {
-    setResizingId(null);
-    document.removeEventListener('touchmove', handleTouchMove);
-    document.removeEventListener('touchend', handleTouchEnd);
   };
 
   const handleMenuAction = (action: string) => {
@@ -613,7 +593,8 @@ const Note = () => {
                   
                   {/* Resize handle */}
                   <div
-                    className="absolute bottom-2 right-2 w-6 h-6 cursor-se-resize touch-none"
+                    className="absolute bottom-2 right-2 w-6 h-6 cursor-se-resize"
+                    style={{ touchAction: 'manipulation' }}
                     onMouseDown={(e) => {
                       e.stopPropagation();
                       startResize(e, block.id);
