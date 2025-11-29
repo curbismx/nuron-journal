@@ -127,7 +127,7 @@ const Index = () => {
   return (
     <div className="fixed inset-0 flex flex-col bg-journal-header overflow-hidden">
       {/* Fixed dark header */}
-      <header className="flex-shrink-0 bg-journal-header pl-[30px] pt-[30px] pr-4 pb-[30px] h-[150px] z-30">
+      <header className="flex-shrink-0 bg-journal-header pl-[30px] pt-[30px] pb-[30px] h-[150px] z-30">
         <div className="flex items-center justify-between mb-auto -mt-[15px]">
           <button className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity">
             <img src={settingsIcon} alt="Settings" className="w-[30px] h-[30px]" />
