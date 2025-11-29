@@ -466,8 +466,9 @@ const Note = () => {
           minHeight: 0
         }}
         onClick={(e) => {
-          // If clicking directly on the scroll container (not on inputs), blur active element
-          if (e.target === e.currentTarget || (e.target as HTMLElement).tagName === 'DIV') {
+          // Only close menu and blur if clicking directly on the scroll container itself
+          // Not on any child elements (which would interfere with text selection)
+          if (e.target === e.currentTarget) {
             setMenuOpen(false);
             if (document.activeElement instanceof HTMLElement) {
               document.activeElement.blur();
