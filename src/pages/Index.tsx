@@ -168,6 +168,7 @@ const Index = () => {
                   const dayName = noteDate.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
                   const preview = getNotePreview(note);
                   const WeatherIcon = note.weather ? getWeatherIcon(note.weather.weatherCode) : null;
+                  const firstImage = note.contentBlocks.find(b => b.type === 'image') as { type: 'image'; id: string; url: string; width: number } | undefined;
 
                   return (
                     <div 
@@ -196,19 +197,33 @@ const Index = () => {
                           </div>
                         )}
                         
-                        {/* Title and Body Container with reduced width */}
+                        {/* Title and Body Container */}
                         <div className="pr-[50px] relative">
+                          {/* Image thumbnail if exists */}
+                          {firstImage && (
+                            <div 
+                              className={`float-right ml-[15px] mb-[10px] ${index === 0 ? '' : 'mt-[0px]'}`}
+                              style={{ marginRight: '0px' }}
+                            >
+                              <img 
+                                src={firstImage.url} 
+                                alt=""
+                                className="w-[70px] h-[70px] rounded-[10px] object-cover"
+                              />
+                            </div>
+                          )}
+                          
                           {/* Title */}
                           <h3 className={`text-[24px] font-outfit font-semibold text-[hsl(0,0%,25%)] mb-4 ${index === 0 ? '-mt-[10px]' : ''}`}>
                             {note.title || 'Untitled'}
                           </h3>
                           
-                          {/* Body preview - 2 lines max */}
+                          {/* Body preview - 2 lines max (or 13 when expanded) */}
                           <p className={`text-[14px] font-outfit text-[hsl(0,0%,50%)] ${menuOpen ? 'line-clamp-[13]' : 'line-clamp-2'} -mt-[10px]`}>
                             {preview || 'No content'}
                           </p>
 
-                          {/* Arrow icon - positioned on the right, centered vertically with title and body only */}
+                          {/* Arrow icon */}
                           <img 
                             src={smallArrow} 
                             alt="" 
