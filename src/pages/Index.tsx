@@ -73,41 +73,46 @@ const Index = () => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only synchronous state updates here to prevent deadlock
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        loadUserProfile(session.user.id);
-        
-        // Reload notes from Supabase
-        const { data } = await supabase
-          .from('notes')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false });
-        
-        if (data) {
-          setSavedNotes(data.map(note => ({
-            id: note.id,
-            title: note.title || 'Untitled',
-            contentBlocks: note.content_blocks as SavedNote['contentBlocks'],
-            createdAt: note.created_at,
-            updatedAt: note.updated_at,
-            weather: note.weather as SavedNote['weather']
-          })));
-        }
-        
-        // Check for merge ONLY on SIGNED_IN event
-        if (event === 'SIGNED_IN') {
-          const localNotes = localStorage.getItem('nuron-notes');
-          if (localNotes) {
-            const parsed = JSON.parse(localNotes);
-            if (parsed.length > 0) {
-              setLocalNotesToMerge(parsed);
-              setShowMergeDialog(true);
+        // Defer Supabase calls to prevent deadlock
+        setTimeout(() => {
+          loadUserProfile(session.user.id);
+          
+          // Reload notes from Supabase
+          supabase
+            .from('notes')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .order('created_at', { ascending: false })
+            .then(({ data }) => {
+              if (data) {
+                setSavedNotes(data.map(note => ({
+                  id: note.id,
+                  title: note.title || 'Untitled',
+                  contentBlocks: note.content_blocks as SavedNote['contentBlocks'],
+                  createdAt: note.created_at,
+                  updatedAt: note.updated_at,
+                  weather: note.weather as SavedNote['weather']
+                })));
+              }
+            });
+          
+          // Check for merge ONLY on SIGNED_IN event
+          if (event === 'SIGNED_IN') {
+            const localNotes = localStorage.getItem('nuron-notes');
+            if (localNotes) {
+              const parsed = JSON.parse(localNotes);
+              if (parsed.length > 0) {
+                setLocalNotesToMerge(parsed);
+                setShowMergeDialog(true);
+              }
             }
           }
-        }
+        }, 0);
       } else {
         setUserProfile(null);
         // Load from localStorage when logged out
