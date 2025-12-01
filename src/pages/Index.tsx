@@ -223,16 +223,23 @@ const Index = () => {
   // Show original start page if no notes
   if (savedNotes.length === 0) {
     return (
-      <div className="fixed inset-0 bg-journal-header flex flex-col">
+      <div className="fixed inset-0 bg-journal-header flex flex-col overflow-hidden">
         {/* Settings Button */}
-        <div className="pl-[30px] pt-[30px]">
-          <button className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity">
-            <img src={settingsIcon} alt="Settings" className="w-[30px] h-[30px]" />
+        <div className="pl-[30px] pt-[30px] z-50">
+          <button 
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src={showSettings ? backIcon : settingsIcon} 
+              alt={showSettings ? "Back" : "Settings"} 
+              className="w-[30px] h-[30px]" 
+            />
           </button>
         </div>
 
         {/* Main Content - Centered */}
-        <main className="flex-1 flex flex-col items-center justify-center px-8">
+        <main className={`flex-1 flex flex-col items-center justify-center px-8 transition-transform duration-300 ease-in-out ${showSettings ? 'translate-y-[100%]' : ''}`}>
           {/* Text and Record Button Container */}
           <div className="relative">
             {/* Handwritten Text Image */}
@@ -258,6 +265,155 @@ const Index = () => {
             </button>
           </div>
         </main>
+
+        {/* Settings panel - same as in notes view */}
+        <div className={`absolute inset-x-0 top-[80px] bottom-0 bg-journal-header px-8 pt-8 transition-opacity duration-300 overflow-y-auto ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="text-white font-outfit space-y-6">
+            {user && userProfile ? (
+              <>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Name</p>
+                    <p className="text-white text-[16px]">{userProfile.name || 'Not set'}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Email</p>
+                    <p className="text-white text-[16px]">{userProfile.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Password</p>
+                    <p className="text-white text-[16px]">••••••••</p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="mt-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : showSignUp ? (
+              <form onSubmit={isSignInMode ? handleSignIn : handleSignUp} className="space-y-6">
+                <div className="space-y-4">
+                  {!isSignInMode && (
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-white/80 text-[14px]">Name</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        placeholder="Your name"
+                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white/80 text-[14px]">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      placeholder="you@example.com"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white/80 text-[14px]">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      placeholder="••••••••"
+                      minLength={6}
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
+                    />
+                  </div>
+
+                  {!isSignInMode && (
+                    <div className="space-y-2">
+                      <Label htmlFor="repeat-password" className="text-white/80 text-[14px]">Repeat Password</Label>
+                      <Input
+                        id="repeat-password"
+                        type="password"
+                        value={repeatPassword}
+                        onChange={(e) => setRepeatPassword(e.target.value)}
+                        required
+                        placeholder="••••••••"
+                        minLength={6}
+                        className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 px-6 py-3 bg-white text-journal-header font-medium rounded-md hover:bg-white/90 transition-colors text-[14px] disabled:opacity-50"
+                  >
+                    {loading ? (isSignInMode ? "Signing in..." : "Creating...") : (isSignInMode ? "Sign In" : "Create Account")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSignUp(false);
+                      setIsSignInMode(false);
+                    }}
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsSignInMode(!isSignInMode)}
+                    className="text-white/60 hover:text-white/80 text-[14px] transition-colors"
+                  >
+                    {isSignInMode ? "Don't have an account? Create one here" : "Already have an account? Sign in here"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-6">
+                <p className="text-white/80 text-[16px] leading-relaxed">
+                  Create an account to save your notes to the cloud<br />
+                  and access them from any device.
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => {
+                      setShowSignUp(true);
+                      setIsSignInMode(true);
+                    }}
+                    className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowSignUp(true);
+                      setIsSignInMode(false);
+                    }}
+                    className="flex-1 px-6 py-3 bg-white text-journal-header font-medium rounded-md hover:bg-white/90 transition-colors text-[14px]"
+                  >
+                    Set Up Account
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
