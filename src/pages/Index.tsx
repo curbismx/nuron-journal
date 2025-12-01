@@ -934,7 +934,7 @@ const Index = () => {
               {/* Account section */}
               <button
                 onClick={() => setShowAccountDetails(true)}
-                className="w-full bg-white/5 border border-white/20 hover:bg-white/10 text-white rounded-[10px] px-4 py-4 flex items-center justify-between transition-colors text-[20px]"
+                className="w-full bg-white/5 border border-white/20 hover:bg-white/10 text-white rounded-[10px] px-4 py-4 flex items-center justify-between transition-colors text-[20px] font-light"
               >
                 <span>Account Details</span>
                 <img src={accountArrow} alt="" className="w-[20px] h-[20px] opacity-60" />
@@ -945,7 +945,7 @@ const Index = () => {
               
               {/* Other settings */}
               <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
-                <span className="text-[20px]">Show weather on notes</span>
+                <span className="text-[20px] font-light">Show weather on notes</span>
                 <button
                   onClick={() => setShowWeatherOnNotes(!showWeatherOnNotes)}
                   className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 ${showWeatherOnNotes ? 'bg-green-500' : 'bg-white/20'}`}
@@ -957,7 +957,7 @@ const Index = () => {
               </div>
 
               <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
-                <span className="text-[20px]">Theme colour</span>
+                <span className="text-[20px] font-light">Theme colour</span>
                 <div className="flex items-center gap-3">
                   {(['default', 'green', 'blue', 'pink'] as const).map((t) => (
                     <button
