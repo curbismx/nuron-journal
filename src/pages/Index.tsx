@@ -18,6 +18,7 @@ import smallArrow from "@/assets/00notearrow-4.png";
 import backIcon from "@/assets/back.png";
 import accountArrow from "@/assets/00settingsarrow-2.png";
 import searchIcon from "@/assets/00search-3.png";
+import searchArrow from "@/assets/00searcharrow.png";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
@@ -1146,7 +1147,7 @@ const Index = () => {
                   }}
                   className="w-[28px] h-[28px] rounded-full border border-[hsl(60,5%,70%)] flex items-center justify-center"
                 >
-                  <span className="text-[hsl(0,0%,50%)] text-[14px]">→</span>
+                  <img src={searchArrow} alt="" className="w-[14px] h-[14px]" />
                 </button>
               </div>
             </div>
