@@ -9,6 +9,7 @@ import condenseIcon from "@/assets/condense-new.png";
 import floatingAddButton from "@/assets/bigredbuttonnoshadow.png";
 import smallArrow from "@/assets/smallarrow.png";
 import backIcon from "@/assets/back-new.png";
+import searchIcon from "@/assets/search.png";
 
 
 interface SavedNote {
@@ -138,12 +139,20 @@ const Index = () => {
             {showSettings ? 'SETTINGS' : headerMonthYear}
           </h1>
           {!showSettings && (
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="absolute right-[30px] top-0"
-            >
-              <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
-            </button>
+            <>
+              <button 
+                onClick={() => {/* TODO: Add search functionality */}}
+                className="absolute right-[80px] top-0"
+              >
+                <img src={searchIcon} alt="Search" className="h-[24px] w-auto" />
+              </button>
+              <button 
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="absolute right-[30px] top-0"
+              >
+                <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
+              </button>
+            </>
           )}
         </div>
       </header>
