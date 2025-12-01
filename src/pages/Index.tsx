@@ -68,6 +68,7 @@ const Index = () => {
   });
   const [showMergeDialog, setShowMergeDialog] = useState(false);
   const [localNotesToMerge, setLocalNotesToMerge] = useState<SavedNote[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Save weather setting to localStorage
   useEffect(() => {
@@ -160,6 +161,7 @@ const Index = () => {
         const stored = localStorage.getItem('nuron-notes');
         setSavedNotes(stored ? JSON.parse(stored) : []);
       }
+      setIsLoading(false);
     };
 
     loadNotes();
@@ -374,6 +376,11 @@ const Index = () => {
       .join('\n\n');
   };
 
+
+  // Show loading screen while checking for notes
+  if (isLoading) {
+    return <div className="fixed inset-0 bg-journal-content" />;
+  }
 
   // Show original start page if no notes
   if (savedNotes.length === 0) {
