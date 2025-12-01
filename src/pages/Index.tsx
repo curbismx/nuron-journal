@@ -1,19 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import settingsIcon from "@/assets/settings-new.png";
-import newPlusIcon from "@/assets/plus-new.png";
+import settingsIcon from "@/assets/settings-2.png";
+import newPlusIcon from "@/assets/new_plus.png";
 import textImage from "@/assets/text.png";
 import plusIcon from "@/assets/plusbig.png";
-import expandIcon from "@/assets/expand-new.png";
-import condenseIcon from "@/assets/condense-new.png";
+import expandIcon from "@/assets/expand-2.png";
+import condenseIcon from "@/assets/condense.png";
 import floatingAddButton from "@/assets/bigredbuttonnoshadow.png";
 import smallArrow from "@/assets/smallarrow.png";
-import backIcon from "@/assets/back-new.png";
-import searchIcon from "@/assets/search.png";
 
 
 interface SavedNote {
@@ -37,157 +31,14 @@ const Index = () => {
   const navigate = useNavigate();
   const [savedNotes, setSavedNotes] = useState<SavedNote[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
-  const [showSignUp, setShowSignUp] = useState(false);
-  const [isSignInMode, setIsSignInMode] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // Load notes based on auth status
+  // Load notes on mount
   useEffect(() => {
-    const loadNotes = async () => {
-      if (user) {
-        // Load from Supabase for authenticated users
-        const { data, error } = await supabase
-          .from('notes')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (data && !error) {
-          setSavedNotes(data.map(note => ({
-            id: note.id,
-            title: note.title || 'Untitled',
-            contentBlocks: note.content_blocks as Array<
-              | { type: 'text'; id: string; content: string }
-              | { type: 'image'; id: string; url: string; width: number }
-            >,
-            createdAt: note.created_at,
-            updatedAt: note.updated_at,
-            weather: note.weather as { temp: number; weatherCode: number } | undefined
-          })));
-        }
-      } else {
-        // Load from localStorage for non-authenticated users
-        const stored = localStorage.getItem('nuron-notes');
-        if (stored) {
-          setSavedNotes(JSON.parse(stored));
-        }
-      }
-    };
-
-    loadNotes();
-  }, [user]);
-
-  // Check authentication status
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        loadUserProfile(session.user.id);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        loadUserProfile(session.user.id);
-      } else {
-        setUserProfile(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    const stored = localStorage.getItem('nuron-notes');
+    if (stored) {
+      setSavedNotes(JSON.parse(stored));
+    }
   }, []);
-
-  const loadUserProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('name, email')
-      .eq('id', userId)
-      .single();
-    
-    if (data) {
-      setUserProfile(data);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setShowSettings(false);
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password !== repeatPassword) {
-      alert("Passwords don't match!");
-      return;
-    }
-    
-    if (password.length < 6) {
-      alert("Password must be at least 6 characters");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
-
-      if (error) throw error;
-
-      alert("Account created successfully!");
-      setShowSignUp(false);
-      setIsSignInMode(false);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setRepeatPassword("");
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      alert("Signed in successfully!");
-      setShowSignUp(false);
-      setIsSignInMode(false);
-      setEmail("");
-      setPassword("");
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Group notes by date
   const groupedNotes: GroupedNotes[] = savedNotes.reduce((groups: GroupedNotes[], note) => {
@@ -250,7 +101,7 @@ const Index = () => {
               <img 
                 src={newPlusIcon} 
                 alt="Record" 
-                className="w-[70px] h-[70px]"
+                className="w-[51px] h-[51px]"
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
                 }}
@@ -268,193 +119,27 @@ const Index = () => {
       {/* Fixed dark header */}
       <header className="flex-shrink-0 bg-journal-header pl-[30px] pt-[30px] pb-[30px] h-[150px] z-30">
         <div className="flex items-center justify-between mb-auto -mt-[15px]">
-          <button 
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity"
-          >
-            <img 
-              src={showSettings ? backIcon : settingsIcon} 
-              alt={showSettings ? "Back" : "Settings"} 
-              className="w-[30px] h-[30px]" 
-            />
+          <button className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity">
+            <img src={settingsIcon} alt="Settings" className="w-[30px] h-[30px]" />
           </button>
           <div className="flex-1" />
         </div>
         <div className="relative mt-[41px]">
           <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px]">
-            {showSettings ? 'SETTINGS' : headerMonthYear}
+            {headerMonthYear}
           </h1>
-          {!showSettings && (
-            <>
-              <button 
-                onClick={() => {/* TODO: Add search functionality */}}
-                className="absolute right-[110px] top-0"
-              >
-                <img src={searchIcon} alt="Search" className="h-[24px] w-auto" />
-              </button>
-              <button 
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="absolute right-[30px] top-0"
-              >
-                <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
-              </button>
-            </>
-          )}
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="absolute right-[30px] top-0"
+          >
+            <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
+          </button>
         </div>
       </header>
 
-      {/* Settings panel - sits behind the card */}
-      <div className={`absolute inset-x-0 top-[150px] bottom-0 bg-journal-header px-8 pt-8 transition-opacity duration-300 overflow-y-auto ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="text-white font-outfit space-y-6">
-          {user && userProfile ? (
-            <>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Name</p>
-                  <p className="text-white text-[16px]">{userProfile.name || 'Not set'}</p>
-                </div>
-                <div>
-                  <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Email</p>
-                  <p className="text-white text-[16px]">{userProfile.email}</p>
-                </div>
-                <div>
-                  <p className="text-white/60 text-[12px] uppercase tracking-wider mb-1">Password</p>
-                  <p className="text-white text-[16px]">••••••••</p>
-                </div>
-              </div>
-              <button
-                onClick={handleSignOut}
-                className="mt-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
-              >
-                Sign Out
-              </button>
-            </>
-          ) : showSignUp ? (
-            <form onSubmit={isSignInMode ? handleSignIn : handleSignUp} className="space-y-6">
-              <div className="space-y-4">
-                {!isSignInMode && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-white/80 text-[14px]">Name</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                      placeholder="Your name"
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80 text-[14px]">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="you@example.com"
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white/80 text-[14px]">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    placeholder="••••••••"
-                    minLength={6}
-                    className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
-                  />
-                </div>
-
-                {!isSignInMode && (
-                  <div className="space-y-2">
-                    <Label htmlFor="repeat-password" className="text-white/80 text-[14px]">Repeat Password</Label>
-                    <Input
-                      id="repeat-password"
-                      type="password"
-                      value={repeatPassword}
-                      onChange={(e) => setRepeatPassword(e.target.value)}
-                      required
-                      placeholder="••••••••"
-                      minLength={6}
-                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40 rounded-[10px]"
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 px-6 py-3 bg-white text-journal-header font-medium rounded-md hover:bg-white/90 transition-colors text-[14px] disabled:opacity-50"
-                >
-                  {loading ? (isSignInMode ? "Signing in..." : "Creating...") : (isSignInMode ? "Sign In" : "Create Account")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowSignUp(false);
-                    setIsSignInMode(false);
-                  }}
-                  className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
-                >
-                  Cancel
-                </button>
-              </div>
-
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => setIsSignInMode(!isSignInMode)}
-                  className="text-white/60 hover:text-white/80 text-[14px] transition-colors"
-                >
-                  {isSignInMode ? "Don't have an account? Create one here" : "Already have an account? Sign in here"}
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="space-y-6">
-              <p className="text-white/80 text-[16px] leading-relaxed">
-                Create an account to save your notes to the cloud<br />
-                and access them from any device.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setShowSignUp(true);
-                    setIsSignInMode(true);
-                  }}
-                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors text-[14px]"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => {
-                    setShowSignUp(true);
-                    setIsSignInMode(false);
-                  }}
-                  className="flex-1 px-6 py-3 bg-white text-journal-header font-medium rounded-md hover:bg-white/90 transition-colors text-[14px]"
-                >
-                  Set Up Account
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Scrollable content area */}
       <div 
-        className={`flex-1 overflow-y-scroll bg-journal-content rounded-t-[30px] overscroll-y-auto z-40 transition-transform duration-300 ease-in-out ${showSettings ? 'translate-y-[100%]' : '-mt-[25px]'}`}
+        className="flex-1 overflow-y-scroll bg-journal-content rounded-t-[30px] overscroll-y-auto z-40 -mt-[25px]"
         style={{ 
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'auto',
@@ -554,17 +239,15 @@ const Index = () => {
       </div>
 
       {/* Floating add button */}
-      {!showSettings && (
-        <img 
-          src={newPlusIcon} 
-          alt="Add Note"
-          onClick={() => navigate('/note')}
-          className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[70px] h-[70px]"
-          style={{
-            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
-          }}
-        />
-      )}
+      <img 
+        src={newPlusIcon} 
+        alt="Add Note"
+        onClick={() => navigate('/note')}
+        className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[51px] h-[51px]"
+        style={{
+          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
+        }}
+      />
     </div>
   );
 };
