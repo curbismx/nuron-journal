@@ -8,6 +8,7 @@ import expandIcon from "@/assets/expand-2.png";
 import condenseIcon from "@/assets/condense.png";
 import floatingAddButton from "@/assets/bigredbuttonnoshadow.png";
 import smallArrow from "@/assets/smallarrow.png";
+import backIcon from "@/assets/back.png";
 
 
 interface SavedNote {
@@ -31,6 +32,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [savedNotes, setSavedNotes] = useState<SavedNote[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Load notes on mount
   useEffect(() => {
@@ -119,27 +121,43 @@ const Index = () => {
       {/* Fixed dark header */}
       <header className="flex-shrink-0 bg-journal-header pl-[30px] pt-[30px] pb-[30px] h-[150px] z-30">
         <div className="flex items-center justify-between mb-auto -mt-[15px]">
-          <button className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity">
-            <img src={settingsIcon} alt="Settings" className="w-[30px] h-[30px]" />
+          <button 
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-0 m-0 border-0 bg-transparent hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src={showSettings ? backIcon : settingsIcon} 
+              alt={showSettings ? "Back" : "Settings"} 
+              className="w-[30px] h-[30px]" 
+            />
           </button>
           <div className="flex-1" />
         </div>
         <div className="relative mt-[41px]">
           <h1 className="text-journal-header-foreground text-[24px] font-outfit font-light tracking-wider leading-none pr-[26px]">
-            {headerMonthYear}
+            {showSettings ? 'SETTINGS' : headerMonthYear}
           </h1>
-          <button 
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="absolute right-[30px] top-0"
-          >
-            <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
-          </button>
+          {!showSettings && (
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="absolute right-[30px] top-0"
+            >
+              <img src={menuOpen ? condenseIcon : expandIcon} alt="Menu" className="h-[24px] w-auto" />
+            </button>
+          )}
         </div>
       </header>
 
+      {/* Settings panel - sits behind the card */}
+      <div className={`absolute inset-x-0 top-[150px] bottom-0 bg-journal-header px-8 pt-8 transition-opacity duration-300 ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className="text-white font-outfit">
+          <p className="text-white/60 text-[14px]">Settings options coming soon...</p>
+        </div>
+      </div>
+
       {/* Scrollable content area */}
       <div 
-        className="flex-1 overflow-y-scroll bg-journal-content rounded-t-[30px] overscroll-y-auto z-40 -mt-[25px]"
+        className={`flex-1 overflow-y-scroll bg-journal-content rounded-t-[30px] overscroll-y-auto z-40 transition-transform duration-300 ease-in-out ${showSettings ? 'translate-y-[70%]' : '-mt-[25px]'}`}
         style={{ 
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'auto',
@@ -239,15 +257,17 @@ const Index = () => {
       </div>
 
       {/* Floating add button */}
-      <img 
-        src={newPlusIcon} 
-        alt="Add Note"
-        onClick={() => navigate('/note')}
-        className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[51px] h-[51px]"
-        style={{
-          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
-        }}
-      />
+      {!showSettings && (
+        <img 
+          src={newPlusIcon} 
+          alt="Add Note"
+          onClick={() => navigate('/note')}
+          className="fixed bottom-[30px] right-[30px] z-50 cursor-pointer w-[51px] h-[51px]"
+          style={{
+            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15))'
+          }}
+        />
+      )}
     </div>
   );
 };
