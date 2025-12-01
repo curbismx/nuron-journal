@@ -51,12 +51,18 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Clear navigation state after reading
   useEffect(() => {
     if ((location.state as any)?.showSettings) {
       window.history.replaceState({}, document.title);
     }
+  }, []);
+
+  // Set initialized after first render
+  useEffect(() => {
+    setIsInitialized(true);
   }, []);
 
   // Load notes based on auth status
@@ -266,6 +272,10 @@ const Index = () => {
       .join('\n\n');
   };
 
+  // Show initialization background to prevent flash
+  if (!isInitialized) {
+    return <div className="fixed inset-0 bg-journal-header" />;
+  }
 
   // Show original start page if no notes
   if (savedNotes.length === 0) {
