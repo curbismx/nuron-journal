@@ -314,12 +314,12 @@ const Note = () => {
       weather: weather ? { temp: weather.temp, weatherCode: weather.weatherCode } : undefined,
     };
 
-    // Check auth directly every time
+    // ALWAYS check auth directly - don't use React state
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
-      // LOGGED IN: Save to Supabase only
-      await supabase.from('notes').upsert({
+      // Logged in - save to Supabase
+      const { error } = await supabase.from('notes').upsert({
         id: noteData.id,
         user_id: session.user.id,
         title: noteData.title,
@@ -328,10 +328,11 @@ const Note = () => {
         updated_at: noteData.updatedAt,
         weather: noteData.weather
       });
+      if (error) console.error('Error saving to Supabase:', error);
     } else {
-      // NOT LOGGED IN: Save to localStorage only
+      // Not logged in - save to localStorage
       const notes = JSON.parse(localStorage.getItem('nuron-notes') || '[]');
-      const existingIndex = notes.findIndex((n: any) => n.id === noteData.id);
+      const existingIndex = notes.findIndex((n: any) => n.id === noteIdRef.current);
       if (existingIndex >= 0) {
         notes[existingIndex] = noteData;
       } else {
