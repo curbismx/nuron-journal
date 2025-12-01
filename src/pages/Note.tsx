@@ -296,6 +296,18 @@ const Note = () => {
     };
   }, [menuOpen]);
 
+  // Helper function to save to localStorage
+  const saveToLocalStorage = (noteData: any) => {
+    const notes = JSON.parse(localStorage.getItem('nuron-notes') || '[]');
+    const existingIndex = notes.findIndex((n: any) => n.id === noteData.id);
+    if (existingIndex >= 0) {
+      notes[existingIndex] = noteData;
+    } else {
+      notes.unshift(noteData);
+    }
+    localStorage.setItem('nuron-notes', JSON.stringify(notes));
+  };
+
   // Save note function
   const saveNote = async () => {
     // Don't save if note was deleted
@@ -318,11 +330,14 @@ const Note = () => {
       weather: weather ? { temp: weather.temp, weatherCode: weather.weatherCode } : undefined,
     };
 
-    if (user) {
+    // Check auth status directly - don't rely on React state
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.user) {
       // Save to Supabase
       const { error } = await supabase.from('notes').upsert({
         id: noteData.id,
-        user_id: user.id,
+        user_id: session.user.id,
         title: noteData.title,
         content_blocks: noteData.contentBlocks,
         created_at: noteData.createdAt,
@@ -332,17 +347,12 @@ const Note = () => {
       
       if (error) {
         console.error('Error saving to Supabase:', error);
+        // If Supabase fails, save to localStorage as backup
+        saveToLocalStorage(noteData);
       }
     } else {
       // Save to localStorage
-      const notes: SavedNote[] = JSON.parse(localStorage.getItem('nuron-notes') || '[]');
-      const existingIndex = notes.findIndex(n => n.id === noteIdRef.current);
-      if (existingIndex >= 0) {
-        notes[existingIndex] = noteData;
-      } else {
-        notes.unshift(noteData);
-      }
-      localStorage.setItem('nuron-notes', JSON.stringify(notes));
+      saveToLocalStorage(noteData);
     }
   };
 
@@ -515,7 +525,10 @@ const Note = () => {
     
     console.log('Deleting note with ID:', noteIdRef.current);
     
-    if (user) {
+    // Check auth status directly - don't rely on React state
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.user) {
       // Delete from Supabase
       const { error } = await supabase
         .from('notes')
