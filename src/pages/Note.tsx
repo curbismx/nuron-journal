@@ -341,13 +341,6 @@ const Note = () => {
     }
   };
 
-  // Save on unmount
-  useEffect(() => {
-    return () => {
-      saveNote();
-    };
-  }, [noteTitle, contentBlocks]);
-
   // Prevent body scroll when viewer is open
   useEffect(() => {
     if (imageViewerOpen) {
@@ -360,8 +353,8 @@ const Note = () => {
     };
   }, [imageViewerOpen]);
 
-  const handleBack = () => {
-    saveNote();
+  const handleBack = async () => {
+    await saveNote();
     navigate('/');
   };
 
