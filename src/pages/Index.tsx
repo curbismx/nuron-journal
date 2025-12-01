@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import settingsIcon from "@/assets/settings-2.png";
+import settingsIcon from "@/assets/settings-new.png";
 import newPlusIcon from "@/assets/new_plus.png";
 import textImage from "@/assets/text.png";
 import plusIcon from "@/assets/plusbig.png";
