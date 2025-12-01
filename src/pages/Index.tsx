@@ -609,7 +609,7 @@ const Index = () => {
               </button>
               
               {/* Separator line */}
-              <div className="border-t border-white/20"></div>
+              <div className="border-t border-white/20 my-[50px]"></div>
               
               {/* Other settings */}
               <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
@@ -685,7 +685,7 @@ const Index = () => {
               </button>
               
               {/* Separator line */}
-              <div className="border-t border-white/20"></div>
+              <div className="border-t border-white/20 my-[50px]"></div>
               
               {/* Other settings */}
               <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
