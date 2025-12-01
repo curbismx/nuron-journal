@@ -645,8 +645,8 @@ const Index = () => {
                 <div className="border-t border-white/20 my-[80px]"></div>
                 
                 {/* Other settings */}
-                <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
-                  <span className="text-[20px]">Show weather on notes</span>
+                <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                  <span className="text-[20px] font-light">Show weather on notes</span>
                   <button
                     onClick={() => setShowWeatherOnNotes(!showWeatherOnNotes)}
                     className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 ${showWeatherOnNotes ? 'bg-green-500' : 'bg-white/20'}`}
@@ -655,6 +655,33 @@ const Index = () => {
                       className={`absolute top-[2px] left-[2px] w-[27px] h-[27px] bg-white rounded-full shadow transition-transform duration-200 ${showWeatherOnNotes ? 'translate-x-[20px]' : 'translate-x-0'}`}
                     />
                   </button>
+                </div>
+
+                {/* Theme selector */}
+                <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                  <span className="text-[20px] font-light">Theme colour</span>
+                  <div className="flex items-center gap-3">
+                    {(['default', 'green', 'blue', 'pink'] as const).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setTheme(t)}
+                        className="flex flex-col items-center relative"
+                        style={{ height: '54px' }}
+                      >
+                        <img 
+                          src={themeSettingsIcons[t]} 
+                          alt={t} 
+                          className="w-[40px] h-[40px]"
+                        />
+                        {theme === t && (
+                          <div 
+                            className="w-[6px] h-[6px] bg-white rounded-full absolute"
+                            style={{ bottom: '0px' }}
+                          />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : showSignUp ? (
@@ -721,8 +748,8 @@ const Index = () => {
                 <div className="border-t border-white/20 my-[80px]"></div>
                 
                 {/* Other settings */}
-                <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
-                  <span className="text-[20px]">Show weather on notes</span>
+                <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                  <span className="text-[20px] font-light">Show weather on notes</span>
                   <button
                     onClick={() => setShowWeatherOnNotes(!showWeatherOnNotes)}
                     className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 ${showWeatherOnNotes ? 'bg-green-500' : 'bg-white/20'}`}
@@ -731,6 +758,33 @@ const Index = () => {
                       className={`absolute top-[2px] left-[2px] w-[27px] h-[27px] bg-white rounded-full shadow transition-transform duration-200 ${showWeatherOnNotes ? 'translate-x-[20px]' : 'translate-x-0'}`}
                     />
                   </button>
+                </div>
+
+                {/* Theme selector */}
+                <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                  <span className="text-[20px] font-light">Theme colour</span>
+                  <div className="flex items-center gap-3">
+                    {(['default', 'green', 'blue', 'pink'] as const).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setTheme(t)}
+                        className="flex flex-col items-center relative"
+                        style={{ height: '54px' }}
+                      >
+                        <img 
+                          src={themeSettingsIcons[t]} 
+                          alt={t} 
+                          className="w-[40px] h-[40px]"
+                        />
+                        {theme === t && (
+                          <div 
+                            className="w-[6px] h-[6px] bg-white rounded-full absolute"
+                            style={{ bottom: '0px' }}
+                          />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -1101,8 +1155,8 @@ const Index = () => {
               <div className="border-t border-white/20 my-[80px]"></div>
               
               {/* Other settings */}
-              <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
-                <span className="text-[20px]">Show weather on notes</span>
+              <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                <span className="text-[20px] font-light">Show weather on notes</span>
                 <button
                   onClick={() => setShowWeatherOnNotes(!showWeatherOnNotes)}
                   className={`relative w-[51px] h-[31px] rounded-full transition-colors duration-200 ${showWeatherOnNotes ? 'bg-green-500' : 'bg-white/20'}`}
@@ -1111,6 +1165,33 @@ const Index = () => {
                     className={`absolute top-[2px] left-[2px] w-[27px] h-[27px] bg-white rounded-full shadow transition-transform duration-200 ${showWeatherOnNotes ? 'translate-x-[20px]' : 'translate-x-0'}`}
                   />
                 </button>
+              </div>
+
+              {/* Theme selector */}
+              <div className="bg-white/5 border border-white/20 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
+                <span className="text-[20px] font-light">Theme colour</span>
+                <div className="flex items-center gap-3">
+                  {(['default', 'green', 'blue', 'pink'] as const).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setTheme(t)}
+                      className="flex flex-col items-center relative"
+                      style={{ height: '54px' }}
+                    >
+                      <img 
+                        src={themeSettingsIcons[t]} 
+                        alt={t} 
+                        className="w-[40px] h-[40px]"
+                      />
+                      {theme === t && (
+                        <div 
+                          className="w-[6px] h-[6px] bg-white rounded-full absolute"
+                          style={{ bottom: '0px' }}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
