@@ -40,8 +40,18 @@ const Index = () => {
   
   // Prevent flash on initial render
   const [isPageReady, setIsPageReady] = useState(false);
-  const [savedNotes, setSavedNotes] = useState<SavedNote[]>([]);
-  const [notesLoaded, setNotesLoaded] = useState(false);
+  const [savedNotes, setSavedNotes] = useState<SavedNote[]>(() => {
+    // Load from localStorage synchronously on first render
+    const stored = localStorage.getItem('nuron-notes');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
   const [menuOpen, setMenuOpen] = useState(false);
   const initialShowSettings = (location.state as any)?.showSettings || false;
   const [showSettings, setShowSettings] = useState(initialShowSettings);
@@ -84,9 +94,10 @@ const Index = () => {
 
   // Load notes based on auth status
   useEffect(() => {
-    const loadNotes = async () => {
-      if (user) {
-        // Load from Supabase for authenticated users
+    // Only fetch from Supabase if user is logged in
+    // localStorage notes are already loaded in initial state
+    if (user) {
+      const loadNotesFromSupabase = async () => {
         const { data, error } = await supabase
           .from('notes')
           .select('*')
@@ -105,18 +116,9 @@ const Index = () => {
             weather: note.weather as { temp: number; weatherCode: number } | undefined
           })));
         }
-        setNotesLoaded(true);
-      } else {
-        // Load from localStorage for non-authenticated users
-        const stored = localStorage.getItem('nuron-notes');
-        if (stored) {
-          setSavedNotes(JSON.parse(stored));
-        }
-        setNotesLoaded(true);
-      }
-    };
-
-    loadNotes();
+      };
+      loadNotesFromSupabase();
+    }
   }, [user]);
 
   // Check authentication status
@@ -294,11 +296,6 @@ const Index = () => {
   // Show solid background until page is ready (prevents flash)
   if (!isPageReady) {
     return <div className="fixed inset-0 bg-journal-header" />;
-  }
-
-  // Show blank screen while notes are loading (prevents flash)
-  if (!notesLoaded) {
-    return <div className="fixed inset-0 bg-journal-content" />;
   }
 
   // Show original start page if no notes
