@@ -207,7 +207,7 @@ const Note = () => {
     }, 50);
     
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [id, contentBlocks]);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -639,6 +639,7 @@ const Note = () => {
               return (
                 <textarea
                   key={block.id}
+                  rows={1}
                   value={block.content}
                   onChange={(e) => {
                     const newBlocks = [...contentBlocks];
