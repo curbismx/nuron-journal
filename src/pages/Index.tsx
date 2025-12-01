@@ -271,7 +271,7 @@ const Index = () => {
       )}
 
         {/* Settings panel */}
-      <div className={`absolute inset-x-0 top-[120px] bottom-0 bg-journal-header px-8 pt-4 overflow-y-auto transition-opacity duration-200 ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`absolute inset-x-0 top-[120px] bottom-0 bg-journal-header px-8 pt-[80px] overflow-y-auto transition-opacity duration-200 ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="text-white font-outfit space-y-6">
           {showChangePassword ? (
             /* Change Password Form */
@@ -370,7 +370,7 @@ const Index = () => {
                 </button>
                 
                 {/* Separator line */}
-                <div className="border-t border-white/20 my-[50px]"></div>
+                <div className="border-t border-white/20 my-[80px]"></div>
                 
                 {/* Other settings */}
                 <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
@@ -446,7 +446,7 @@ const Index = () => {
                 </button>
                 
                 {/* Separator line */}
-                <div className="border-t border-white/20 my-[50px]"></div>
+                <div className="border-t border-white/20 my-[80px]"></div>
                 
                 {/* Other settings */}
                 <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
@@ -531,7 +531,7 @@ const Index = () => {
       </header>
 
       {/* Settings panel - sits behind the card */}
-      <div className={`absolute inset-x-0 top-[150px] bottom-0 bg-journal-header px-8 pt-8 transition-opacity duration-200 overflow-y-auto ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`absolute inset-x-0 top-[150px] bottom-0 bg-journal-header px-8 pt-[80px] transition-opacity duration-200 overflow-y-auto ${showSettings ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="text-white font-outfit space-y-6">
           {showChangePassword ? (
             /* Change Password Form */
@@ -630,7 +630,7 @@ const Index = () => {
               </button>
               
               {/* Separator line */}
-              <div className="border-t border-white/20 my-[50px]"></div>
+              <div className="border-t border-white/20 my-[80px]"></div>
               
               {/* Other settings */}
               <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
@@ -706,7 +706,7 @@ const Index = () => {
               </button>
               
               {/* Separator line */}
-              <div className="border-t border-white/20 my-[50px]"></div>
+              <div className="border-t border-white/20 my-[80px]"></div>
               
               {/* Other settings */}
               <div className="bg-white/5 text-white rounded-[10px] px-4 py-4 flex items-center justify-between">
