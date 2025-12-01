@@ -64,26 +64,49 @@ const Index = () => {
     localStorage.setItem('nuron-show-weather', JSON.stringify(showWeatherOnNotes));
   }, [showWeatherOnNotes]);
 
-  // Load notes - check auth directly each time
+  // Check authentication status and set up auth listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const wasLoggedOut = !user;
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+        
+        // ONLY check for merge on actual LOGIN (not page refresh)
+        if (event === 'SIGNED_IN' && wasLoggedOut) {
+          const localNotes = localStorage.getItem('nuron-notes');
+          if (localNotes) {
+            const parsed = JSON.parse(localNotes);
+            if (parsed.length > 0) {
+              setLocalNotesToMerge(parsed);
+              setShowMergeDialog(true);
+            }
+          }
+        }
+      } else {
+        setUserProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load notes from Supabase or localStorage based on auth status
   useEffect(() => {
     const loadNotes = async () => {
+      // ALWAYS check auth directly
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        setUser(session.user);
-        loadUserProfile(session.user.id);
-        
-        // Check for local notes to merge (one-time on login)
-        const localNotes = localStorage.getItem('nuron-notes');
-        if (localNotes) {
-          const parsed = JSON.parse(localNotes);
-          if (parsed.length > 0) {
-            setLocalNotesToMerge(parsed);
-            setShowMergeDialog(true);
-          }
-        }
-        
-        // Load from Supabase
+        // Logged in - load from Supabase WITH user_id filter
         const { data } = await supabase
           .from('notes')
           .select('*')
@@ -101,22 +124,14 @@ const Index = () => {
           })));
         }
       } else {
-        setUser(null);
-        // Load from localStorage
+        // Not logged in - load from localStorage
         const stored = localStorage.getItem('nuron-notes');
         setSavedNotes(stored ? JSON.parse(stored) : []);
       }
     };
-    
+
     loadNotes();
-    
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      loadNotes(); // Just reload everything when auth changes
-    });
-    
-    return () => subscription.unsubscribe();
-  }, []);
+  }, [user]);
 
   const loadUserProfile = async (userId: string) => {
     const { data } = await supabase
@@ -251,44 +266,49 @@ const Index = () => {
     if (!user) return;
     
     setLoading(true);
-    
-    // Upload all local notes to Supabase
-    for (const note of localNotesToMerge) {
-      await supabase.from('notes').upsert({
-        id: note.id,
-        user_id: user.id,
-        title: note.title,
-        content_blocks: note.contentBlocks,
-        created_at: note.createdAt,
-        updated_at: note.updatedAt,
-        weather: note.weather
-      });
+    try {
+      // Upload ALL local notes to Supabase (upsert handles duplicates)
+      for (const note of localNotesToMerge) {
+        await supabase.from('notes').upsert({
+          id: note.id,
+          user_id: user.id,
+          title: note.title,
+          content_blocks: note.contentBlocks,
+          created_at: note.createdAt,
+          updated_at: note.updatedAt,
+          weather: note.weather
+        });
+      }
+      
+      // Clear localStorage
+      localStorage.removeItem('nuron-notes');
+      
+      // Reload everything from Supabase
+      const { data } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (data) {
+        setSavedNotes(data.map(note => ({
+          id: note.id,
+          title: note.title || 'Untitled',
+          contentBlocks: note.content_blocks as SavedNote['contentBlocks'],
+          createdAt: note.created_at,
+          updatedAt: note.updated_at,
+          weather: note.weather as SavedNote['weather']
+        })));
+      }
+      
+      setLocalNotesToMerge([]);
+    } catch (error: any) {
+      console.error('Error syncing notes:', error);
+      alert('Error syncing: ' + error.message);
+    } finally {
+      setLoading(false);
+      setShowMergeDialog(false);
     }
-    
-    // Clear localStorage - we're now fully on Supabase
-    localStorage.removeItem('nuron-notes');
-    
-    // Reload notes from Supabase
-    const { data } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    
-    if (data) {
-      setSavedNotes(data.map(note => ({
-        id: note.id,
-        title: note.title || 'Untitled',
-        contentBlocks: note.content_blocks as SavedNote['contentBlocks'],
-        createdAt: note.created_at,
-        updatedAt: note.updated_at,
-        weather: note.weather as SavedNote['weather']
-      })));
-    }
-    
-    setLoading(false);
-    setShowMergeDialog(false);
-    setLocalNotesToMerge([]);
   };
 
 
