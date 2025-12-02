@@ -950,7 +950,8 @@ const Index = () => {
               {passwordFormError && (
                 <p className="text-red-400 text-[14px]">{passwordFormError}</p>
               )}
-              <div className="flex gap-4 mt-6">
+              <div className="pt-6">
+                <div className="flex gap-4">
                 <button
                   type="submit"
                   disabled={loading}
@@ -971,6 +972,7 @@ const Index = () => {
                   Cancel
                 </button>
               </div>
+            </div>
             </form>
           ) : showAccountDetails ? (
             /* Account Details View */
