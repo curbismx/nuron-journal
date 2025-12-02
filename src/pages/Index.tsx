@@ -916,9 +916,9 @@ const Index = () => {
         <div className="text-white font-outfit space-y-6">
           {showChangePassword ? (
             /* Change Password Form */
-            <form onSubmit={handleChangePassword} className="space-y-4">
+            <form onSubmit={handleChangePassword} className="space-y-4 -mt-[80px]">
               <div className="space-y-2">
-                <Label className="text-white/80 text-[14px]">New Password</Label>
+                <Label className="text-white/60 text-[12px] uppercase tracking-wider">New Password</Label>
                 <Input
                   type="password"
                   value={newPassword}
@@ -933,7 +933,7 @@ const Index = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-white/80 text-[14px]">Confirm New Password</Label>
+                <Label className="text-white/60 text-[12px] uppercase tracking-wider">Confirm New Password</Label>
                 <Input
                   type="password"
                   value={confirmNewPassword}
@@ -950,25 +950,27 @@ const Index = () => {
               {passwordFormError && (
                 <p className="text-red-400 text-[14px]">{passwordFormError}</p>
               )}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-6 py-3 bg-white text-journal-header font-medium rounded-[10px] hover:bg-white/90 transition-colors disabled:opacity-50"
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowChangePassword(false);
-                  setNewPassword("");
-                  setConfirmNewPassword("");
-                  setPasswordFormError("");
-                }}
-                className="w-full px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-[10px] transition-colors"
-              >
-                Cancel
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 bg-white text-journal-header font-medium rounded-[10px] hover:bg-white/90 transition-colors disabled:opacity-50 text-[14px]"
+                >
+                  {loading ? "Updating..." : "Update Password"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowChangePassword(false);
+                    setNewPassword("");
+                    setConfirmNewPassword("");
+                    setPasswordFormError("");
+                  }}
+                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-[10px] transition-colors text-[14px]"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           ) : showAccountDetails ? (
             /* Account Details View */
